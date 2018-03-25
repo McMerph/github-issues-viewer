@@ -1,11 +1,11 @@
 import * as parse from "parse-link-header";
 import { Dispatch } from "redux";
 import ActionType from "./actions/ActionType";
+import IAddIssuesAction from "./actions/IAddIssuesAction";
+import retrieveIssues, { IRetrieveIssuesParameters } from "./api/retrieveIssues";
 import retrieveRepos from "./api/retrieveRepos";
 import retrieveUser from "./api/retrieveUser";
 import IStore from "./IStore";
-import retrieveIssues, { IRetrieveIssuesParameters } from "./api/retrieveIssues";
-import IAddIssuesAction from "./actions/IAddIssuesAction";
 
 const actionCreator = {
   retrieveUser: (login: string) => {
@@ -47,12 +47,11 @@ const actionCreator = {
     return (dispatch: Dispatch<IStore>) => {
       retrieveIssues(parameters)
         .then((issuesResponse) => {
+          const { page, pageNumber, settings, link } = issuesResponse;
+          const parsedLink = parse(link);
+          const lastPageNumber: number = parsedLink.last ? parseInt(parsedLink.last.page, 10) : pageNumber;
           const addIssuesAction: IAddIssuesAction = {
-            payload: {
-              page: issuesResponse.page,
-              pageNumber: issuesResponse.pageNumber,
-              settings: issuesResponse.settings,
-            },
+            payload: { lastPageNumber, page, pageNumber, settings, },
             type: ActionType.AddIssues,
           };
           dispatch(addIssuesAction);

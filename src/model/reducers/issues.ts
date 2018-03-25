@@ -18,12 +18,13 @@ function equals(settings1: IIssuesSettings, settings2: IIssuesSettings): boolean
 
 export const issues = (state: IIssuesList = defaultState, action: IAction): IIssuesList => {
   if (isAddIssuesAction(action)) {
-    const { settings, pageNumber, page } = action.payload;
+    const { settings, pageNumber, page, lastPageNumber } = action.payload;
     const pages: IIssuesPage[] = equals(settings, state.settings) ? [...state.pages] : [];
     pages[pageNumber - 1] = page;
 
     return {
-      currentPage: state.currentPage,
+      currentPage: pageNumber,
+      lastPage: lastPageNumber,
       pages,
       settings,
     };

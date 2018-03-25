@@ -65,7 +65,7 @@ function retrieveIssues(parameters: IRetrieveIssuesParameters): Promise<IRetriev
           title: issue.title,
         }));
         return {
-          linkHeader: link,
+          link,
           page: { eTag, issues },
           pageNumber,
           settings: { login, perPage, repo },

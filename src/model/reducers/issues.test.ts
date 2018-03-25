@@ -41,6 +41,7 @@ describe("issues() is a issues reducer", () => {
     };
     const addIssuesAction: IAddIssuesAction = {
       payload: {
+        lastPageNumber: 3,
         page,
         pageNumber: 1,
         settings,
@@ -54,6 +55,7 @@ describe("issues() is a issues reducer", () => {
     // Then
     expect(state).toEqual({
       currentPage: 1,
+      lastPage: 3,
       pages: [page],
       settings,
     });
