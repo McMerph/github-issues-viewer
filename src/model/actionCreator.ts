@@ -4,7 +4,8 @@ import ActionType from "./actions/ActionType";
 import retrieveRepos from "./api/retrieveRepos";
 import retrieveUser from "./api/retrieveUser";
 import IStore from "./IStore";
-import retrieveIssues from "./api/retrieveIssues";
+import retrieveIssues, { IRetrieveIssuesParameters } from "./api/retrieveIssues";
+import IAddIssuesAction from "./actions/IAddIssuesAction";
 
 const actionCreator = {
   retrieveUser: (login: string) => {
@@ -42,11 +43,19 @@ const actionCreator = {
       retrievePage();
     };
   },
-  retrieveIssues: (login: string, repo: string, page: number) => {
+  retrieveIssues: (parameters: IRetrieveIssuesParameters) => {
     return (dispatch: Dispatch<IStore>) => {
-      retrieveIssues(login, repo, page)
-        .then((issuesPageResponse) => {
-          dispatch({ type: ActionType.SetIssues, issues: issuesPageResponse.page, page });
+      retrieveIssues(parameters)
+        .then((issuesResponse) => {
+          const addIssuesAction: IAddIssuesAction = {
+            payload: {
+              page: issuesResponse.page,
+              pageNumber: issuesResponse.pageNumber,
+              settings: issuesResponse.settings,
+            },
+            type: ActionType.AddIssues,
+          };
+          dispatch(addIssuesAction);
         })
         .catch((error) => {
           // TODO handle error

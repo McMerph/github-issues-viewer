@@ -58,7 +58,7 @@ export default function retrieveRepos(login: string, page: number): Promise<IRep
           },
         };
       } else {
-        throw new Error("Info is not properly formatted");
+        throw new Error("Invalid format");
       }
     })
     .catch((error) => {

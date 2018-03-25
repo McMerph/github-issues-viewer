@@ -1,65 +1,61 @@
 import ActionType from "../actions/ActionType";
 import IAction from "../actions/IAction";
-import ISetIssuesAction from "../actions/ISetIssuesAction";
-import ApiState from "../entities/ApiState";
+import IAddIssuesAction from "../actions/IAddIssuesAction";
+import IIssuesList from "../entities/IIssuesList";
 import IIssuesPage from "../entities/IIssuesPage";
+import IIssuesSettings from "../entities/IIssuesSettings";
 import { issues } from "./issues";
 
-describe("issues() is a reducer for repositories of current user", () => {
-  test("issues() instantiated with correct initial state", () => {
+describe("issues() is a issues reducer", () => {
+  test("issues() instantiates with correct initial state", () => {
     // Given
-    const action: IAction = { type: ActionType.SetIssues, };
+    const action: IAction = { type: ActionType.AddIssues };
 
     // When
-    const state: IIssuesPage[] = issues(undefined, action);
+    const state: IIssuesList = issues(undefined, action);
 
     // Then
-    expect(state).toEqual([]);
+    expect(state).toEqual({
+      currentPage: 1,
+      pages: [],
+      settings: { perPage: 10 },
+    });
   });
 
-  test("issues() correctly handle apiState change", () => {
+  test("issues() correctly handle addIssuesAction", () => {
     // Given
-    const setIssuesAction: ISetIssuesAction = {
-      issues: { apiState: ApiState.Error },
-      page: 1,
-      type: ActionType.SetIssues,
+    const settings: IIssuesSettings = {
+      login: "login",
+      perPage: 10,
+      repo: "repo",
     };
-
-    // When
-    const state: IIssuesPage[] = issues(undefined, setIssuesAction);
-
-    // Then
-    expect(state).toEqual([{ apiState: ApiState.Error }]);
-  });
-
-  test("issues() correctly set issues fields", () => {
-    // Given
-    const issuesState: IIssuesPage = {
-        apiState: ApiState.Success,
-        eTag: "Loremipsumdolorsitamet,consecteturadipisicingelit.Culpalaudantium",
-        issues: [
-          { title: "title1", number: 1, creationDate: new Date("2018-01-23T21:39:10Z") },
-          { title: "title2", number: 2, creationDate: new Date("2018-03-23T21:39:10Z") },
-        ],
-      }
-    ;
-    const setIssuesAction: ISetIssuesAction = {
-      issues: issuesState,
-      page: 2,
-      type: ActionType.SetIssues,
-    };
-
-    // When
-    const state: IIssuesPage[] = issues(undefined, setIssuesAction);
-
-    // Then
-    expect(state).toEqual([undefined, {
-      apiState: ApiState.Success,
-      eTag: "Loremipsumdolorsitamet,consecteturadipisicingelit.Culpalaudantium",
+    const page: IIssuesPage = {
+      eTag: "eTag",
       issues: [
-        { title: "title1", number: 1, creationDate: new Date("2018-01-23T21:39:10Z") },
-        { title: "title2", number: 2, creationDate: new Date("2018-03-23T21:39:10Z") },
+        {
+          creationDate: new Date("2018-01-23T21:39:10Z"),
+          number: 1,
+          title: "title1",
+        },
       ],
-    }]);
+    };
+    const addIssuesAction: IAddIssuesAction = {
+      payload: {
+        page,
+        pageNumber: 1,
+        settings,
+      },
+      type: ActionType.AddIssues,
+    };
+
+    // When
+    const state: IIssuesList = issues(undefined, addIssuesAction);
+
+    // Then
+    expect(state).toEqual({
+      currentPage: 1,
+      pages: [page],
+      settings,
+    });
   });
 });

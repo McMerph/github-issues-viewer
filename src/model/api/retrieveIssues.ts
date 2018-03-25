@@ -1,37 +1,47 @@
-import ApiState from "../entities/ApiState";
 import IIssue from "../entities/IIssue";
 import IIssuesPage from "../entities/IIssuesPage";
+import IIssuesSettings from "../entities/IIssuesSettings";
 import URIS from "./uris";
 
-interface IIssuesPageResponse {
+interface IRetrieveIssuesParameters {
+  login: string;
+  repo: string;
+  pageNumber: number;
+  perPage: number;
+}
+
+interface IRetrieveIssuesResponse {
+  settings: IIssuesSettings;
   page: IIssuesPage;
-  linkHeader?: any;
+  pageNumber: number;
+  link?: string;
 }
 
 interface IIssueJson {
   title: string;
   number: number;
-
-  // TODO Date?
   created_at: string;
 }
 
-function isIssuesArrayJson(issues: any): issues is IIssueJson[] {
-  return Array.isArray(issues) && issues.every((issue) => isIssueJson(issue));
+function isIssueJsonArray(issues: any): issues is IIssueJson[] {
+  return Array.isArray(issues) &&
+    issues.every((issue) =>
+      typeof issue.title === "string" &&
+      typeof issue.number === "number" &&
+      typeof issue.created_at === "string");
 }
 
-function isIssueJson(issue: any): issue is IIssueJson {
-  return typeof issue.title === "string" &&
-    typeof issue.number === "number" &&
-    typeof issue.created_at === "string";
-}
-
-export default function retrieveIssues(login: string, repo: string, page: number): Promise<IIssuesPageResponse> {
-  let eTagHeader: string | undefined;
-  let linkHeader: string | undefined;
+// TODO Introduce parameters object
+// TODO Make etag optional?
+// TODO Use etag
+function retrieveIssues(parameters: IRetrieveIssuesParameters): Promise<IRetrieveIssuesResponse> {
+  const { login, repo, pageNumber, perPage } = parameters;
+  let eTag: string | undefined;
+  let link: string | undefined;
 
   // TODO per_page=100 after tests
-  return fetch(`${URIS.ROOT}/${URIS.REPOS}/${login}/${repo}/${URIS.ISSUES}?page=${page}&per_page=10`, {
+  // TODO DRY
+  return fetch(`${URIS.ROOT}/${URIS.REPOS}/${login}/${repo}/${URIS.ISSUES}?page=${pageNumber}&per_page=${perPage}`, {
     headers: {
       Accept: "application/vnd.github.v3+json",
     },
@@ -39,8 +49,8 @@ export default function retrieveIssues(login: string, repo: string, page: number
   })
     .then((response) => {
       if (response.ok) {
-        eTagHeader = response.headers.get("etag") || undefined;
-        linkHeader = response.headers.get("link") || undefined;
+        eTag = response.headers.get("etag") || undefined;
+        link = response.headers.get("link") || undefined;
 
         return response.json();
       } else {
@@ -48,26 +58,29 @@ export default function retrieveIssues(login: string, repo: string, page: number
       }
     })
     .then((json) => {
-      if (isIssuesArrayJson(json)) {
+      if (isIssueJsonArray(json)) {
         const issues: IIssue[] = json.map((issue) => ({
           creationDate: new Date(issue.created_at),
           number: issue.number,
           title: issue.title,
         }));
         return {
-          linkHeader,
-          page: {
-            apiState: ApiState.Success,
-            eTag: eTagHeader,
-            issues,
-          },
+          linkHeader: link,
+          page: { eTag, issues },
+          pageNumber,
+          settings: { login, perPage, repo },
         };
       } else {
-        throw new Error("Info is not properly formatted");
+        throw new Error("Invalid format");
       }
     })
     .catch((error) => {
-      console.error("There has been a problem with your fetch operation: " + error.message);
-      return { page: { apiState: ApiState.Error } };
+      // TODO Handle error?
+      throw new Error("There has been a problem with your fetch operation: " + error.message);
+      // console.error("There has been a problem with your fetch operation: " + error.message);
+      // return { page: { apiState: ApiState.Error } };
     });
 }
+
+export default retrieveIssues;
+export { IRetrieveIssuesParameters, IRetrieveIssuesResponse };

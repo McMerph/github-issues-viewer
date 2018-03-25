@@ -1,20 +1,21 @@
 import * as React from "react";
-import IUser from "../../../model/entities/IUser";
-import UserInfo from "../presentational/user-info";
-import ReposInfo from "../presentational/repos-info";
+import { IRetrieveIssuesParameters } from "../../../model/api/retrieveIssues";
 import IReposPage from "../../../model/entities/IReposPage";
+import IUser from "../../../model/entities/IUser";
 import IssuesInfo from "../presentational/issues-info";
-import IIssuesPage from "../../../model/entities/IIssuesPage";
+import ReposInfo from "../presentational/repos-info";
+import UserInfo from "../presentational/user-info";
+import IIssuesList from "../../../model/entities/IIssuesList";
 
 export interface IStateFromProps {
-  issues: IIssuesPage[];
+  issues: IIssuesList;
   user: IUser;
   repos: IReposPage[];
 }
 
 export interface IDispatchFromProps {
   actions: {
-    onRetrieveIssues(login: string, repo: string, page: number): void;
+    onRetrieveIssues(parameters: IRetrieveIssuesParameters): void;
     onRetrieveUser(login: string): void;
     onRetrieveRepos(login: string): void;
   };

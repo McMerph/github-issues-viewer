@@ -1,10 +1,11 @@
 import * as React from "react";
 import { FormEvent } from "react";
-import IIssuesPage from "../../../../model/entities/IIssuesPage";
+import { IRetrieveIssuesParameters } from "../../../../model/api/retrieveIssues";
+import IIssuesList from "../../../../model/entities/IIssuesList";
 
 interface IProps {
-  issues: IIssuesPage[];
-  onRetrieveIssues(login: string, repo: string, page: number): void;
+  issues: IIssuesList;
+  onRetrieveIssues(parameters: IRetrieveIssuesParameters): void;
 }
 
 interface IState {
@@ -25,6 +26,7 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
 
   public render(): React.ReactNode {
     const { issues } = this.props;
+    const { settings } = issues;
 
     return (
       <form onSubmit={this.onSubmit}>
@@ -41,11 +43,12 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
           <button type="button">Prev</button>
           <button type="button">Next</button>
         </div>
+        <div>Current page: {issues.currentPage}</div>
+        <div> Login: {settings.login}, Repo: {settings.repo}, PerPage: {settings.perPage}</div>
         {/*TODO Change to ul > li*/}
-        {issues.map((page, index) => (
+        {issues.pages.map((page, index) => (
           <div key={index}>
             <div>Page {index + 1}:</div>
-            <div>apiState:{page.apiState}</div>
             <div>eTag:{page.eTag}</div>
             <div>Issues:</div>
             {page.issues && page.issues.map((issue, issueIndex) =>
@@ -59,7 +62,12 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
   private onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     if (this.state.login.length > 0 && this.state.repo.length > 0) {
-      this.props.onRetrieveIssues(this.state.login, this.state.repo, 1);
+      this.props.onRetrieveIssues({
+        login: this.state.login,
+        pageNumber: 1,
+        perPage: 10,
+        repo: this.state.repo,
+      });
       this.setState({ login: "", repo: "" });
     }
   }

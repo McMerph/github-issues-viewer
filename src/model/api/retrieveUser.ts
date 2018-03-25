@@ -37,7 +37,7 @@ export default function retrieveUser(login: string): Promise<IUser> {
           login: json.login,
         };
       } else {
-        throw new Error("Info is not properly formatted");
+        throw new Error("Invalid format");
       }
     })
     .catch((error) => {

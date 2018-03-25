@@ -1,7 +1,7 @@
 {
   "name": "github-issues-viewer",
   "version": "0.0.1",
-  "description": "Git hub issues viewer",
+  "description": "GitHub issues viewer",
   "browserslist": [
     "last 2 Chrome versions",
     "last 2 ChromeAndroid versions",
