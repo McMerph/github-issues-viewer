@@ -27,19 +27,20 @@ interface IProps {
 }
 
 interface IState {
-  // TODO Add page
   login: string;
   repo: string;
+  perPage: number;
 }
 
 export default class IssuesInfo extends React.PureComponent<IProps, IState> {
 
   public constructor(props: Readonly<IProps>) {
     super(props);
-    this.state = { login: "", repo: "" };
+    this.state = { login: "reactjs", repo: "reactjs.org", perPage: 10 };
     this.onSubmit = this.onSubmit.bind(this);
     this.onChangeLogin = this.onChangeLogin.bind(this);
     this.onChangeRepo = this.onChangeRepo.bind(this);
+    this.onChangePerPage = this.onChangePerPage.bind(this);
     this.onPrevious = this.onPrevious.bind(this);
     this.onNext = this.onNext.bind(this);
   }
@@ -57,11 +58,15 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
               <Legend>Choose repository</Legend>
               <Label>
                 Login
-                <Input type="text" value={this.state.login} onChange={this.onChangeLogin}/>
+                <Input type="text" placeholder="e.g. reactjs" value={this.state.login} onChange={this.onChangeLogin}/>
               </Label>
               <Label>
                 Repo
-                <Input type="text" value={this.state.repo} onChange={this.onChangeRepo}/>
+                <Input type="text" placeholder="e.g. reactjs.org" value={this.state.repo} onChange={this.onChangeRepo}/>
+              </Label>
+              <Label>
+                Per page
+                <Input type="number" value={this.state.perPage} onChange={this.onChangePerPage}/>
               </Label>
               <RetrieveButton type="submit">Retrieve</RetrieveButton>
             </Fieldset>
@@ -97,7 +102,7 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
     this.props.onRetrieveIssues({
       login: this.state.login,
       pageNumber,
-      perPage: 10,
+      perPage: this.state.perPage,
       repo: this.state.repo,
     });
   }
@@ -136,6 +141,14 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
   private onChangeRepo(event: FormEvent<HTMLInputElement>): void {
     const repo: string = event.currentTarget.value;
     this.setState({ repo });
+  }
+
+  private onChangePerPage(event: FormEvent<HTMLInputElement>): void {
+    let perPage: number = parseInt(event.currentTarget.value, 10);
+    if (isNaN(perPage) || perPage < 1) {
+      perPage = 1;
+    }
+    this.setState({ perPage });
   }
 
 }
