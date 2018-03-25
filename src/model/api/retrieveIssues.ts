@@ -39,7 +39,6 @@ function retrieveIssues(parameters: IRetrieveIssuesParameters): Promise<IRetriev
   let eTag: string | undefined;
   let link: string | undefined;
 
-  // TODO per_page=100 after tests
   // TODO DRY
   return fetch(`${URIS.ROOT}/${URIS.REPOS}/${login}/${repo}/${URIS.ISSUES}?page=${pageNumber}&per_page=${perPage}`, {
     headers: {

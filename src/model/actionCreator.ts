@@ -49,7 +49,9 @@ const actionCreator = {
         .then((issuesResponse) => {
           const { page, pageNumber, settings, link } = issuesResponse;
           const parsedLink = parse(link);
-          const lastPageNumber: number = parsedLink.last ? parseInt(parsedLink.last.page, 10) : pageNumber;
+          const lastPageNumber: number = (parsedLink && parsedLink.last) ?
+            parseInt(parsedLink.last.page, 10) :
+            pageNumber;
           const addIssuesAction: IAddIssuesAction = {
             payload: { lastPageNumber, page, pageNumber, settings, },
             type: ActionType.AddIssues,

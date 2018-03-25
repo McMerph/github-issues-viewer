@@ -36,7 +36,7 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
 
   public constructor(props: Readonly<IProps>) {
     super(props);
-    this.state = { login: "reactjs", repo: "reactjs.org", perPage: 10 };
+    this.state = { login: "reactjs", repo: "reactjs.org", perPage: 100 };
     this.onSubmit = this.onSubmit.bind(this);
     this.onChangeLogin = this.onChangeLogin.bind(this);
     this.onChangeRepo = this.onChangeRepo.bind(this);
@@ -71,12 +71,14 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
               <RetrieveButton type="submit">Retrieve</RetrieveButton>
             </Fieldset>
           </form>
-          <HeadTitle>{login} / {repo}</HeadTitle>
-          <Navigation>
-            <BackButton type="button" disabled={!this.hasPrevious()} onClick={this.onPrevious}>← Назад</BackButton>
-            <NavigationInfo>{currentPage} из {lastPage}</NavigationInfo>
-            <NextButton type="button" disabled={!this.hasNext()} onClick={this.onNext}>Далее →</NextButton>
-          </Navigation>
+          {login && repo && <HeadTitle>{login} / {repo}</HeadTitle>}
+          {(this.hasPrevious() || this.hasNext()) && (
+            <Navigation>
+              <BackButton type="button" disabled={!this.hasPrevious()} onClick={this.onPrevious}>← Назад</BackButton>
+              <NavigationInfo>{currentPage} из {lastPage}</NavigationInfo>
+              <NextButton type="button" disabled={!this.hasNext()} onClick={this.onNext}>Далее →</NextButton>
+            </Navigation>
+          )}
         </Head>
         {/*TODO Change to ul > li*/}
         {page && page.issues.length > 0 && page.issues.map((issue, issueIndex) =>

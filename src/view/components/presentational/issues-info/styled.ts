@@ -88,6 +88,7 @@ const IssueTitle = styled.div`
 const Button = styled.button`
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
   color: ${COLORS.COLOR1};
+  cursor: pointer;
   border: 1px solid ${COLORS.COLOR6};
   border-radius: 3px;
   outline: 0;
@@ -105,6 +106,7 @@ const Button = styled.button`
 
   &:disabled {
     color: ${COLORS.COLOR7};
+    cursor: not-allowed;
   }
 `;
 
