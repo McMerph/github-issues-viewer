@@ -2,6 +2,7 @@ import * as React from "react";
 import { FormEvent } from "react";
 import { IRetrieveIssuesParameters } from "../../../../model/api/retrieveIssues";
 import IIssuesList from "../../../../model/entities/IIssuesList";
+import { BackButton, DateTime, Head, Issue, IssueHeader, Navigation, NextButton, Title } from "./styled";
 
 interface IProps {
   issues: IIssuesList;
@@ -39,20 +40,23 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
           <input type="text" value={this.state.repo} onChange={this.onChangeRepo}/>
         </label>
         <button type="submit">Retrieve</button>
-        <div>
-          <button type="button">Prev</button>
-          <button type="button">Next</button>
-        </div>
-        <div>Current page: {issues.currentPage}</div>
-        <div> Login: {settings.login}, Repo: {settings.repo}, PerPage: {settings.perPage}</div>
+        <Head>{settings.login} / {settings.repo}</Head>
         {/*TODO Change to ul > li*/}
         {issues.pages.map((page, index) => (
           <div key={index}>
-            <div>Page {index + 1}:</div>
-            <div>eTag:{page.eTag}</div>
-            <div>Issues:</div>
+            <Navigation>
+              <BackButton type="button">← Назад</BackButton>
+              <div>Страница {index + 1} из 777</div>
+              <NextButton type="button">Далее →</NextButton>
+            </Navigation>
             {page.issues && page.issues.map((issue, issueIndex) =>
-              <div key={issueIndex}>{issue.title}---{issue.number}---{issue.creationDate.toLocaleString("ru")}</div>)}
+              <Issue key={issueIndex}>
+                <IssueHeader>
+                  <div>{issue.number}</div>
+                  <DateTime>{issue.creationDate.toLocaleString("ru")}</DateTime>
+                </IssueHeader>
+                <Title>{issue.title}</Title>
+              </Issue>)}
           </div>
         ))}
       </form>

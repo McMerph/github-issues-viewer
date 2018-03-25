@@ -29,10 +29,6 @@ injectGlobal`
     background-color: #e2e1e0;
   }
 
-  #root {
-    padding: 10px;
-  }
-
   /* RobotoLightLatin */
   @font-face {
     font-family: 'Roboto';
