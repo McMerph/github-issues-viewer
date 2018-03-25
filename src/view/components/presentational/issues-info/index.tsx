@@ -2,7 +2,23 @@ import * as React from "react";
 import { FormEvent } from "react";
 import { IRetrieveIssuesParameters } from "../../../../model/api/retrieveIssues";
 import IIssuesList from "../../../../model/entities/IIssuesList";
-import { BackButton, DateTime, Head, Issue, IssueHeader, Navigation, NextButton, Title } from "./styled";
+import {
+  BackButton,
+  Fieldset,
+  Head,
+  HeadTitle,
+  Input,
+  Issue,
+  IssueDateTime,
+  IssueHeader,
+  IssueTitle,
+  Label,
+  Legend,
+  Navigation,
+  NavigationInfo,
+  NextButton,
+  RetrieveButton,
+} from "./styled";
 import IIssuesPage from "../../../../model/entities/IIssuesPage";
 
 interface IProps {
@@ -34,32 +50,39 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
     const page: IIssuesPage = pages[currentPage - 1];
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <label>
-          Login
-          <input type="text" value={this.state.login} onChange={this.onChangeLogin}/>
-        </label>
-        <label>
-          Repo
-          <input type="text" value={this.state.repo} onChange={this.onChangeRepo}/>
-        </label>
-        <button type="submit">Retrieve</button>
-        <Head>{login} / {repo}</Head>
-        <Navigation>
-          <BackButton type="button" disabled={!this.hasPrevious()} onClick={this.onPrevious}>← Назад</BackButton>
-          <div>{currentPage} из {lastPage}</div>
-          <NextButton type="button" disabled={!this.hasNext()} onClick={this.onNext}>Далее →</NextButton>
-        </Navigation>
+      <React.Fragment>
+        <Head>
+          <form onSubmit={this.onSubmit}>
+            <Fieldset>
+              <Legend>Choose repository</Legend>
+              <Label>
+                Login
+                <Input type="text" value={this.state.login} onChange={this.onChangeLogin}/>
+              </Label>
+              <Label>
+                Repo
+                <Input type="text" value={this.state.repo} onChange={this.onChangeRepo}/>
+              </Label>
+              <RetrieveButton type="submit">Retrieve</RetrieveButton>
+            </Fieldset>
+          </form>
+          <HeadTitle>{login} / {repo}</HeadTitle>
+          <Navigation>
+            <BackButton type="button" disabled={!this.hasPrevious()} onClick={this.onPrevious}>← Назад</BackButton>
+            <NavigationInfo>{currentPage} из {lastPage}</NavigationInfo>
+            <NextButton type="button" disabled={!this.hasNext()} onClick={this.onNext}>Далее →</NextButton>
+          </Navigation>
+        </Head>
         {/*TODO Change to ul > li*/}
         {page && page.issues.length > 0 && page.issues.map((issue, issueIndex) =>
           <Issue key={issueIndex}>
             <IssueHeader>
               <div>{issue.number}</div>
-              <DateTime>{issue.creationDate.toLocaleString("ru")}</DateTime>
+              <IssueDateTime>{issue.creationDate.toLocaleString("ru")}</IssueDateTime>
             </IssueHeader>
-            <Title>{issue.title}</Title>
+            <IssueTitle>{issue.title}</IssueTitle>
           </Issue>)}
-      </form>
+      </React.Fragment>
     );
   }
 

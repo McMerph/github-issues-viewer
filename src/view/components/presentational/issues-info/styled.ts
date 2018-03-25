@@ -1,6 +1,33 @@
 import styled from "styled-components";
 import { COLORS, FONTS_STACK } from "../constants";
 
+const Fieldset = styled.fieldset`
+  border: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const Legend = styled.legend`
+  margin: 0 auto;
+  font: normal 500 26px/1 ${FONTS_STACK.ROBOTO};
+`;
+
+const Label = styled.label`
+  font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
+  color: ${COLORS.COLOR1};
+  display: flex;
+  align-items: baseline;
+  margin: 16px 0;
+`;
+
+const Input = styled.input`
+  font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
+  color: ${COLORS.COLOR1};
+  padding: 6px 0;
+  margin-left: auto;
+  flex: 0 1 70%;
+`;
+
 const Card = styled.div`
   box-sizing: border-box;
   width: 98%;
@@ -8,24 +35,28 @@ const Card = styled.div`
 `;
 
 const Head = Card.extend`
-  font: normal 500 26px/1 ${FONTS_STACK.ROBOTO};
-  text-align: center;
   box-shadow:
     0 2px 4px -1px rgba(0, 0, 0, 0.2),
     0 4px 5px 0 rgba(0, 0, 0, 0.14),
     0 1px 10px 0 rgba(0, 0, 0, 0.12);
-  padding: 16px 24px;
+  padding: 16px;
   margin: 24px auto;
   background: ${COLORS.COLOR4};
 `;
 
-const Navigation = Card.extend`
+const HeadTitle = styled.div`
+  font: normal 500 26px/1 ${FONTS_STACK.ROBOTO};
+  text-align: center;
+  margin: 16px 0;
+`;
+
+const Navigation = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const NavigationInfo = styled.div`
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
-  margin: 16px auto;
-  background: ${COLORS.COLOR3};
-  padding: 8px;
 `;
 
 const Issue = Card.extend`
@@ -44,34 +75,41 @@ const IssueHeader = styled.div`
   color: ${COLORS.COLOR2};
 `;
 
-const DateTime = styled.div`
+const IssueDateTime = styled.div`
   margin-left: auto;
 `;
 
-const Title = styled.div`
+const IssueTitle = styled.div`
   color: ${COLORS.COLOR1};
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
   margin: 14px 0;
 `;
 
 const Button = styled.button`
+  font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
+  color: ${COLORS.COLOR1};
   border: 1px solid ${COLORS.COLOR6};
   border-radius: 3px;
   outline: 0;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   background: linear-gradient(to bottom, ${COLORS.COLOR3}, ${COLORS.COLOR5});
   padding: 14px;
-  display: inline-flex;
-  align-items: center;
-  vertical-align: middle;
   transition:
     border-radius 150ms ease-in-out,
     transform 150ms ease-in-out;
 
   &:active {
     border-radius: 30px;
-    transform: scale(1.1);
+    transform: scale(1.03);
   }
+
+  &:disabled {
+    color: ${COLORS.COLOR7};
+  }
+`;
+
+const RetrieveButton = Button.extend`
+  width: 100%;
 `;
 
 const BackButton = Button.extend`
@@ -82,4 +120,20 @@ const NextButton = Button.extend`
   margin-left: auto;
 `;
 
-export { Head, Navigation, Issue, IssueHeader, DateTime, Title, BackButton, NextButton };
+export {
+  Fieldset,
+  Legend,
+  Label,
+  Input,
+  Head,
+  HeadTitle,
+  Navigation,
+  NavigationInfo,
+  Issue,
+  IssueHeader,
+  IssueDateTime,
+  IssueTitle,
+  RetrieveButton,
+  BackButton,
+  NextButton,
+};
