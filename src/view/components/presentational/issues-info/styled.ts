@@ -21,7 +21,6 @@ const Head = Card.extend`
 
 const Navigation = Card.extend`
   display: flex;
-  justify-content: center;
   align-items: center;
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
   margin: 16px auto;
