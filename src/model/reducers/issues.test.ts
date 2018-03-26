@@ -2,9 +2,10 @@ import ActionType from "../actions/ActionType";
 import IAction from "../actions/IAction";
 import IAddIssuesAction from "../actions/IAddIssuesAction";
 import IIssue from "../entities/IIssue";
-import IIssues, { ICachedIssue } from "../entities/IIssues";
+import IIssues from "../entities/IIssues";
 import IIssuesSettings from "../entities/IIssuesSettings";
 import { issues } from "./issues";
+import ICachedPage from "../entities/ICachedPage";
 
 describe("issues() is a issues reducer", () => {
   test("issues() instantiates with correct initial state", () => {
@@ -39,7 +40,7 @@ describe("issues() is a issues reducer", () => {
       payload: { page, settings, eTag, lastPage },
       type: ActionType.AddIssues,
     };
-    const cache: ICachedIssue[] = [{ eTag, page, settings: JSON.stringify(settings), lastPage }];
+    const cache: ICachedPage[] = [{ eTag, page, settings: JSON.stringify(settings), lastPage }];
 
     // When
     const state: IIssues = issues(undefined, addIssuesAction);

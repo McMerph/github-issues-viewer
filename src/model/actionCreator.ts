@@ -7,8 +7,8 @@ import retrieveRepos from "./api/retrieveRepos";
 import retrieveUser from "./api/retrieveUser";
 import IIssuesSettings, { isIssuesSettings } from "./entities/IIssuesSettings";
 import IStore from "./IStore";
-import { ICachedIssue } from "./entities/IIssues";
 import NotModifiedError from "./api/NotModifiedError";
+import ICachedPage from "./entities/ICachedPage";
 
 const actionCreator = {
   retrieveUser: (login: string) => {
@@ -48,7 +48,7 @@ const actionCreator = {
   },
   retrieveIssues: (parameters: IIssuesSettings) => {
     return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
-      const cachedPage: ICachedIssue | undefined = getState().issues.cache
+      const cachedPage: ICachedPage | undefined = getState().issues.cache
         .find((pageInJsonFormat) => {
           const cachedSettings = JSON.parse(pageInJsonFormat.settings);
           if (isIssuesSettings(cachedSettings)) {
