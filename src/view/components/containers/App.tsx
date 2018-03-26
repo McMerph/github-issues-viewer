@@ -5,10 +5,10 @@ import IUser from "../../../model/entities/IUser";
 import IssuesInfo from "../presentational/issues-info";
 import ReposInfo from "../presentational/repos-info";
 import UserInfo from "../presentational/user-info";
-import IIssuesList from "../../../model/entities/IIssuesList";
+import IIssues from "../../../model/entities/IIssues";
 
 export interface IStateFromProps {
-  issues: IIssuesList;
+  issues: IIssues;
   user: IUser;
   repos: IReposPage[];
 }

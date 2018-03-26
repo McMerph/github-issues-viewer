@@ -1,9 +1,9 @@
-import IIssuesList from "./entities/IIssuesList";
+import IIssues from "./entities/IIssues";
 import IReposPage from "./entities/IReposPage";
 import IUser from "./entities/IUser";
 
 export default interface IStore {
-  issues: IIssuesList;
+  issues: IIssues;
   user: IUser;
   repos: IReposPage[];
 }

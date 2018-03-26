@@ -5,6 +5,7 @@ import IAddIssuesAction from "./actions/IAddIssuesAction";
 import retrieveIssues, { IRetrieveIssuesParameters } from "./api/retrieveIssues";
 import retrieveRepos from "./api/retrieveRepos";
 import retrieveUser from "./api/retrieveUser";
+import IIssuesSettings from "./entities/IIssuesSettings";
 import IStore from "./IStore";
 
 const actionCreator = {
@@ -44,16 +45,18 @@ const actionCreator = {
     };
   },
   retrieveIssues: (parameters: IRetrieveIssuesParameters) => {
-    return (dispatch: Dispatch<IStore>) => {
+    return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
+      console.log(getState());
       retrieveIssues(parameters)
         .then((issuesResponse) => {
-          const { page, pageNumber, settings, link } = issuesResponse;
+          const { page, link } = issuesResponse;
           const parsedLink = parse(link);
-          const lastPageNumber: number = (parsedLink && parsedLink.last) ?
+          const lastPage: number = (parsedLink && parsedLink.last) ?
             parseInt(parsedLink.last.page, 10) :
-            pageNumber;
+            issuesResponse.settings.currentPage;
+          const settings: IIssuesSettings = { ...issuesResponse.settings, lastPage };
           const addIssuesAction: IAddIssuesAction = {
-            payload: { lastPageNumber, page, pageNumber, settings, },
+            payload: { page, settings, eTag: issuesResponse.eTag },
             type: ActionType.AddIssues,
           };
           dispatch(addIssuesAction);

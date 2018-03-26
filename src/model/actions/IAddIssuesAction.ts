@@ -11,8 +11,7 @@ interface IAddIssuesAction extends IAction {
 interface IAddIssuesActionPayload {
   settings: IIssuesSettings;
   page: IIssuesPage;
-  pageNumber: number;
-  lastPageNumber?: number;
+  eTag: string;
 }
 
 // TODO Split to own file?
@@ -20,7 +19,7 @@ function isAddIssuesAction(action: IAction): action is IAddIssuesAction {
   const cast: IAddIssuesAction = action as IAddIssuesAction;
   return action.type === ActionType.AddIssues &&
     cast.payload &&
-    !!cast.payload.pageNumber && typeof cast.payload.pageNumber === "number" &&
+    typeof cast.payload.eTag === "string" &&
     cast.payload.settings && isIssuesSettings(cast.payload.settings) &&
     cast.payload.page && isIssuesPage(cast.payload.page);
 }

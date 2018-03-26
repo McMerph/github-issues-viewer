@@ -1,7 +1,7 @@
 import * as React from "react";
 import { FormEvent } from "react";
 import { IRetrieveIssuesParameters } from "../../../../model/api/retrieveIssues";
-import IIssuesList from "../../../../model/entities/IIssuesList";
+import IIssues from "../../../../model/entities/IIssues";
 import {
   BackButton,
   Fieldset,
@@ -22,7 +22,7 @@ import {
 import IIssuesPage from "../../../../model/entities/IIssuesPage";
 
 interface IProps {
-  issues: IIssuesList;
+  issues: IIssues;
   onRetrieveIssues(parameters: IRetrieveIssuesParameters): void;
 }
 
@@ -46,9 +46,9 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
   }
 
   public render(): React.ReactNode {
-    const { pages, currentPage, lastPage } = this.props.issues;
+    const { currentPage, lastPage } = this.props.issues.settings;
     const { login, repo } = this.props.issues.settings;
-    const page: IIssuesPage = pages[currentPage - 1];
+    const page: IIssuesPage | undefined = this.props.issues.page;
 
     return (
       <React.Fragment>
@@ -110,28 +110,26 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
   }
 
   private hasPrevious(): boolean {
-    const { login, repo } = this.props.issues.settings;
-    const { currentPage } = this.props.issues;
+    const { login, repo, currentPage } = this.props.issues.settings;
 
     return !!login && !!repo && currentPage > 1;
   }
 
   private hasNext(): boolean {
-    const { login, repo } = this.props.issues.settings;
-    const { currentPage, lastPage } = this.props.issues;
+    const { login, repo, currentPage, lastPage } = this.props.issues.settings;
 
     return !!login && !!repo && !!lastPage && currentPage < lastPage;
   }
 
   private onPrevious(): void {
     if (this.hasPrevious()) {
-      this.retrieve(this.props.issues.currentPage - 1);
+      this.retrieve(this.props.issues.settings.currentPage - 1);
     }
   }
 
   private onNext(): void {
     if (this.hasNext()) {
-      this.retrieve(this.props.issues.currentPage + 1);
+      this.retrieve(this.props.issues.settings.currentPage + 1);
     }
   }
 

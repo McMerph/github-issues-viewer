@@ -13,8 +13,8 @@ interface IRetrieveIssuesParameters {
 interface IRetrieveIssuesResponse {
   settings: IIssuesSettings;
   page: IIssuesPage;
-  pageNumber: number;
   link?: string;
+  eTag: string;
 }
 
 interface IIssueJson {
@@ -36,7 +36,7 @@ function isIssueJsonArray(issues: any): issues is IIssueJson[] {
 // TODO Use etag
 function retrieveIssues(parameters: IRetrieveIssuesParameters): Promise<IRetrieveIssuesResponse> {
   const { login, repo, pageNumber, perPage } = parameters;
-  let eTag: string | undefined;
+  let eTag: string;
   let link: string | undefined;
 
   // TODO DRY
@@ -48,7 +48,7 @@ function retrieveIssues(parameters: IRetrieveIssuesParameters): Promise<IRetriev
   })
     .then((response) => {
       if (response.ok) {
-        eTag = response.headers.get("etag") || undefined;
+        eTag = response.headers.get("etag") || "";
         link = response.headers.get("link") || undefined;
 
         return response.json();
@@ -64,10 +64,10 @@ function retrieveIssues(parameters: IRetrieveIssuesParameters): Promise<IRetriev
           title: issue.title,
         }));
         return {
+          eTag,
           link,
-          page: { eTag, issues },
-          pageNumber,
-          settings: { login, perPage, repo },
+          page: { issues },
+          settings: { login, perPage, repo, currentPage: pageNumber },
         };
       } else {
         throw new Error("Invalid format");
