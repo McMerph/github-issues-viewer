@@ -33,6 +33,7 @@
   "license": "ISC",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
+    "lodash": "^4.17.5",
     "normalize.css": "^8.0.0",
     "parse-link-header": "^1.0.1",
     "react": "^16.2.0",
@@ -45,6 +46,7 @@
   },
   "devDependencies": {
     "@types/jest": "^22.2.0",
+    "@types/lodash": "^4.14.106",
     "@types/node": "^9.4.7",
     "@types/react": "^16.0.40",
     "@types/react-dom": "^16.0.3",

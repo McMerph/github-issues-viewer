@@ -80,7 +80,6 @@ const actionCreator = {
         })
         .catch((error) => {
           if (error instanceof NotModifiedError) {
-            console.log("NoContendOrNotModifiedError!");
             if (cachedPage && requestETag) {
               const addIssuesAction: IAddIssuesAction = {
                 payload: {

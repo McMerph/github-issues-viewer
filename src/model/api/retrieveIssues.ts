@@ -55,7 +55,7 @@ function retrieveIssues(parameters: IIssuesSettings, requestETag?: string): Prom
     .then((json) => {
       if (isIssueJsonArray(json)) {
         const page: IIssue[] = json.map((issue) => ({
-          creationDate: new Date(issue.created_at),
+          creationDate: new Date(issue.created_at).toString(),
           number: issue.number,
           title: issue.title,
         }));

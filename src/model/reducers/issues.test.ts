@@ -28,7 +28,7 @@ describe("issues() is a issues reducer", () => {
     };
     const page: IIssue[] = [
       {
-        creationDate: new Date("2018-01-23T21:39:10Z"),
+        creationDate: new Date("2018-01-23T21:39:10Z").toString(),
         number: 1,
         title: "title1",
       },

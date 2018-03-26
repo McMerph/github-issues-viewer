@@ -93,7 +93,7 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
           <Issue key={issueIndex}>
             <IssueHeader>
               <div>{issue.number}</div>
-              <IssueDateTime>{issue.creationDate.toLocaleString("ru")}</IssueDateTime>
+              <IssueDateTime>{new Date(issue.creationDate).toLocaleString("ru")}</IssueDateTime>
             </IssueHeader>
             <IssueTitle>{issue.title}</IssueTitle>
           </Issue>)}

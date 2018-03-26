@@ -8,8 +8,8 @@ export default interface IIssuesSettings {
 
 export function isIssuesSettings(object: any): object is IIssuesSettings {
   const cast: IIssuesSettings = object as IIssuesSettings;
-  return (!cast.login || typeof cast.login === "string") &&
+  return typeof cast.login === "string" &&
     typeof cast.perPage === "number" &&
-    (!cast.repo || typeof cast.repo === "string") &&
+    typeof cast.repo === "string" &&
     typeof cast.pageNumber === "number";
 }
