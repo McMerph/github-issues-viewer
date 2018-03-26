@@ -4,9 +4,9 @@ import ApiState from "../../../../model/entities/ApiState";
 import IIssue from "../../../../model/entities/IIssue";
 import IIssues from "../../../../model/entities/IIssues";
 import IIssuesSettings from "../../../../model/entities/IIssuesSettings";
+import Navigation from "../navigation";
 import Spinner from "../spinner";
 import {
-  BackButton,
   Fieldset,
   Head,
   HeadTitle,
@@ -16,11 +16,8 @@ import {
   IssueTitle,
   Label,
   Legend,
-  NavigationInfo,
-  NextButton,
   RetrieveButton,
   StyledIssue,
-  StyledNavigation,
   Ul,
 } from "./styled";
 
@@ -51,6 +48,8 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
     this.onSubmit = this.onSubmit.bind(this);
     this.onPrevious = this.onPrevious.bind(this);
     this.onNext = this.onNext.bind(this);
+    this.hasPrevious = this.hasPrevious.bind(this);
+    this.hasNext = this.hasNext.bind(this);
   }
 
   public render(): React.ReactNode {
@@ -58,28 +57,6 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
     const login: string | undefined = issues.settings ? issues.settings.login : undefined;
     const repo: string | undefined = issues.settings ? issues.settings.repo : undefined;
     const page: IIssue[] | undefined = issues.page;
-
-    const Navigation: React.SFC<{}> = () => (
-      (this.hasPrevious() || this.hasNext()) ? (
-        <StyledNavigation>
-          <BackButton
-            type="button"
-            disabled={!this.hasPrevious() || issues.apiState === ApiState.Loading}
-            onClick={this.onPrevious}
-          >
-            ← Назад
-          </BackButton>
-          <NavigationInfo>{issues.settings && issues.settings.pageNumber} из {issues.lastPage}</NavigationInfo>
-          <NextButton
-            type="button"
-            disabled={!this.hasNext() || issues.apiState === ApiState.Loading}
-            onClick={this.onNext}
-          >
-            Далее →
-          </NextButton>
-        </StyledNavigation>
-      ) : null
-    );
 
     const Issue: React.SFC<{ issue: IIssue }> = (props) => (
       <StyledIssue>
@@ -134,7 +111,13 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
             </Fieldset>
           </form>
           {login && repo && <HeadTitle>{login} / {repo}</HeadTitle>}
-          <Navigation/>
+          <Navigation
+            issues={issues}
+            hasPrevious={this.hasPrevious}
+            hasNext={this.hasNext}
+            onPrevious={this.onPrevious}
+            onNext={this.onNext}
+          />
         </Head>
         {issues.apiState === ApiState.Loading ? <Spinner/> : (<Ul>
           {page && page.length > 0 && page.map((issue, issueIndex) =>
