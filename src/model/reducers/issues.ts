@@ -4,6 +4,7 @@ import { isSetIssuesApiStateAction } from "../actions/ISetIssuesApiStateAction";
 import ApiState from "../entities/ApiState";
 import ICachedPage from "../entities/ICachedPage";
 import IIssues from "../entities/IIssues";
+import equalsIssuesSettings from "../utils";
 
 const defaultState: IIssues = {
   apiState: ApiState.Idle,
@@ -14,7 +15,8 @@ export const issues = (state: IIssues = defaultState, action: IAction): IIssues 
   if (isAddIssuesAction(action)) {
     const { eTag, lastPage, page, settings } = action.payload;
     const cache: ICachedPage[] = [
-      ...state.cache.filter((cachedPage) => cachedPage.eTag !== eTag),
+      ...state.cache.filter((cachedPage) =>
+        !equalsIssuesSettings(JSON.parse(cachedPage.settings), settings)),
       {
         eTag,
         lastPage,

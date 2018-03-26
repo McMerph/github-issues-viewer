@@ -5,12 +5,13 @@ import IAddIssuesAction from "./actions/IAddIssuesAction";
 import retrieveIssues from "./api/retrieveIssues";
 import retrieveRepos from "./api/retrieveRepos";
 import retrieveUser from "./api/retrieveUser";
-import IIssuesSettings, { isIssuesSettings } from "./entities/IIssuesSettings";
+import IIssuesSettings from "./entities/IIssuesSettings";
 import IStore from "./IStore";
 import NotModifiedError from "./api/NotModifiedError";
 import ICachedPage from "./entities/ICachedPage";
 import ApiState from "./entities/ApiState";
 import ISetIssuesApiStateAction from "./actions/ISetIssuesApiStateAction";
+import equalsIssuesSettings from "./utils";
 
 const actionCreator = {
   retrieveUser: (login: string) => {
@@ -51,16 +52,8 @@ const actionCreator = {
   retrieveIssues: (parameters: IIssuesSettings) => {
     return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
       const cachedPage: ICachedPage | undefined = getState().issues.cache
-        .find((pageInJsonFormat) => {
-          const cachedSettings = JSON.parse(pageInJsonFormat.settings);
-          if (isIssuesSettings(cachedSettings)) {
-            return cachedSettings.login === parameters.login &&
-              cachedSettings.repo === parameters.repo &&
-              cachedSettings.pageNumber === parameters.pageNumber &&
-              cachedSettings.perPage === parameters.perPage;
-          }
-          return false;
-        });
+        .find((pageInJsonFormat) =>
+          equalsIssuesSettings(JSON.parse(pageInJsonFormat.settings), parameters));
       let requestETag: string | undefined;
       if (cachedPage) {
         requestETag = cachedPage.eTag;
