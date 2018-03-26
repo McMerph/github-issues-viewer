@@ -1,5 +1,4 @@
 import IIssue from "../entities/IIssue";
-import IIssuesPage from "../entities/IIssuesPage";
 import IIssuesSettings from "../entities/IIssuesSettings";
 import URIS from "./uris";
 
@@ -12,7 +11,7 @@ interface IRetrieveIssuesParameters {
 
 interface IRetrieveIssuesResponse {
   settings: IIssuesSettings;
-  page: IIssuesPage;
+  page: IIssue[];
   link?: string;
   eTag: string;
 }
@@ -58,7 +57,7 @@ function retrieveIssues(parameters: IRetrieveIssuesParameters): Promise<IRetriev
     })
     .then((json) => {
       if (isIssueJsonArray(json)) {
-        const issues: IIssue[] = json.map((issue) => ({
+        const page: IIssue[] = json.map((issue) => ({
           creationDate: new Date(issue.created_at),
           number: issue.number,
           title: issue.title,
@@ -66,7 +65,7 @@ function retrieveIssues(parameters: IRetrieveIssuesParameters): Promise<IRetriev
         return {
           eTag,
           link,
-          page: { issues },
+          page,
           settings: { login, perPage, repo, currentPage: pageNumber },
         };
       } else {

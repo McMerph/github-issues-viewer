@@ -19,7 +19,7 @@ import {
   NextButton,
   RetrieveButton,
 } from "./styled";
-import IIssuesPage from "../../../../model/entities/IIssuesPage";
+import IIssue from "../../../../model/entities/IIssue";
 
 interface IProps {
   issues: IIssues;
@@ -48,7 +48,7 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
   public render(): React.ReactNode {
     const { currentPage, lastPage } = this.props.issues.settings;
     const { login, repo } = this.props.issues.settings;
-    const page: IIssuesPage | undefined = this.props.issues.page;
+    const page: IIssue[] | undefined = this.props.issues.page;
 
     return (
       <React.Fragment>
@@ -81,7 +81,7 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
           )}
         </Head>
         {/*TODO Change to ul > li*/}
-        {page && page.issues.length > 0 && page.issues.map((issue, issueIndex) =>
+        {page && page.length > 0 && page.map((issue, issueIndex) =>
           <Issue key={issueIndex}>
             <IssueHeader>
               <div>{issue.number}</div>

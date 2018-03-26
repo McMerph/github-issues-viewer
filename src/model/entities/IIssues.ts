@@ -1,13 +1,13 @@
-import IIssuesPage from "./IIssuesPage";
 import IIssuesSettings from "./IIssuesSettings";
+import IIssue from "./IIssue";
 
 export interface ICachedIssue {
   eTag: string;
-  page: IIssuesPage;
+  page: IIssue[];
 }
 
 export default interface IIssues {
   cache: Map<string, ICachedIssue>;
-  page?: IIssuesPage;
+  page?: IIssue[];
   settings: IIssuesSettings;
 }
