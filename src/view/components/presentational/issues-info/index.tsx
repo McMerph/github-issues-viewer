@@ -6,20 +6,8 @@ import IIssues from "../../../../model/entities/IIssues";
 import IIssuesSettings from "../../../../model/entities/IIssuesSettings";
 import Navigation from "../navigation";
 import Spinner from "../spinner";
-import {
-  Fieldset,
-  Head,
-  HeadTitle,
-  Input,
-  IssueDateTime,
-  IssueHeader,
-  IssueTitle,
-  Label,
-  Legend,
-  RetrieveButton,
-  StyledIssue,
-  Ul,
-} from "./styled";
+import { Fieldset, Head, HeadTitle, Input, Label, Legend, RetrieveButton, Ul, } from "./styled";
+import Issue from "../issue";
 
 interface IProps {
   issues: IIssues;
@@ -57,18 +45,6 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
     const login: string | undefined = issues.settings ? issues.settings.login : undefined;
     const repo: string | undefined = issues.settings ? issues.settings.repo : undefined;
     const page: IIssue[] | undefined = issues.page;
-
-    const Issue: React.SFC<{ issue: IIssue }> = (props) => (
-      <StyledIssue>
-        <IssueHeader>
-          <div>{props.issue.number}</div>
-          <IssueDateTime>
-            {new Date(props.issue.creationDate).toLocaleString("ru")}
-          </IssueDateTime>
-        </IssueHeader>
-        <IssueTitle>{props.issue.title}</IssueTitle>
-      </StyledIssue>
-    );
 
     return (
       <React.Fragment>
@@ -121,7 +97,10 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
         </Head>
         {issues.apiState === ApiState.Loading ? <Spinner/> : (<Ul>
           {page && page.length > 0 && page.map((issue, issueIndex) =>
-            <Issue issue={issue} key={issueIndex}/>)}
+            <Issue
+              issue={issue}
+              key={issueIndex}
+            />)}
         </Ul>)}
       </React.Fragment>
     );
