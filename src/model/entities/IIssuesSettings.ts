@@ -1,8 +1,8 @@
-// TODO Rename to parameters?
+// TODO Rename to request parameters?
 export default interface IIssuesSettings {
-  login?: string;
-  repo?: string;
-  currentPage: number;
+  login: string;
+  repo: string;
+  pageNumber: number;
   perPage: number;
 }
 
@@ -11,5 +11,5 @@ export function isIssuesSettings(object: any): object is IIssuesSettings {
   return (!cast.login || typeof cast.login === "string") &&
     typeof cast.perPage === "number" &&
     (!cast.repo || typeof cast.repo === "string") &&
-    typeof cast.currentPage === "number";
+    typeof cast.pageNumber === "number";
 }

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { FormEvent } from "react";
-import { IRetrieveIssuesParameters } from "../../../../model/api/retrieveIssues";
 import IIssues from "../../../../model/entities/IIssues";
 import {
   BackButton,
@@ -20,10 +19,11 @@ import {
   RetrieveButton,
 } from "./styled";
 import IIssue from "../../../../model/entities/IIssue";
+import IIssuesSettings from "../../../../model/entities/IIssuesSettings";
 
 interface IProps {
   issues: IIssues;
-  onRetrieveIssues(parameters: IRetrieveIssuesParameters): void;
+  onRetrieveIssues(parameters: IIssuesSettings): void;
 }
 
 interface IState {
@@ -47,8 +47,15 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
 
   public render(): React.ReactNode {
     const { lastPage } = this.props.issues;
-    const { currentPage } = this.props.issues.settings;
-    const { login, repo } = this.props.issues.settings;
+    // TODO Introduce Navigation component?
+    let pageNumber;
+    let login;
+    let repo;
+    if (this.props.issues.settings) {
+      pageNumber = this.props.issues.settings.pageNumber;
+      login = this.props.issues.settings.login;
+      repo = this.props.issues.settings.repo;
+    }
     const page: IIssue[] | undefined = this.props.issues.page;
 
     return (
@@ -76,7 +83,7 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
           {(this.hasPrevious() || this.hasNext()) && (
             <Navigation>
               <BackButton type="button" disabled={!this.hasPrevious()} onClick={this.onPrevious}>← Назад</BackButton>
-              <NavigationInfo>{currentPage} из {lastPage}</NavigationInfo>
+              <NavigationInfo>{pageNumber} из {lastPage}</NavigationInfo>
               <NextButton type="button" disabled={!this.hasNext()} onClick={this.onNext}>Далее →</NextButton>
             </Navigation>
           )}
@@ -111,27 +118,34 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
   }
 
   private hasPrevious(): boolean {
-    const { login, repo, currentPage } = this.props.issues.settings;
+    if (this.props.issues.settings) {
+      const { login, repo, pageNumber } = this.props.issues.settings;
+      return !!login && !!repo && pageNumber > 1;
+    }
 
-    return !!login && !!repo && currentPage > 1;
+    return false;
   }
 
   private hasNext(): boolean {
-    const { lastPage } = this.props.issues;
-    const { login, repo, currentPage } = this.props.issues.settings;
+    if (this.props.issues.settings) {
+      const { lastPage } = this.props.issues;
+      const { login, repo, pageNumber } = this.props.issues.settings;
 
-    return !!login && !!repo && !!lastPage && currentPage < lastPage;
+      return !!login && !!repo && !!lastPage && pageNumber < lastPage;
+    }
+
+    return false;
   }
 
   private onPrevious(): void {
-    if (this.hasPrevious()) {
-      this.retrieve(this.props.issues.settings.currentPage - 1);
+    if (this.props.issues.settings && this.hasPrevious()) {
+      this.retrieve(this.props.issues.settings.pageNumber - 1);
     }
   }
 
   private onNext(): void {
-    if (this.hasNext()) {
-      this.retrieve(this.props.issues.settings.currentPage + 1);
+    if (this.props.issues.settings && this.hasNext()) {
+      this.retrieve(this.props.issues.settings.pageNumber + 1);
     }
   }
 

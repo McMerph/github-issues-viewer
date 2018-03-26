@@ -9,6 +9,6 @@ export interface ICachedIssue {
 export default interface IIssues {
   cache: Map<string, ICachedIssue>;
   page?: IIssue[];
-  settings: IIssuesSettings;
+  settings?: IIssuesSettings;
   lastPage?: number;
 }

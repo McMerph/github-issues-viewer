@@ -15,19 +15,13 @@ describe("issues() is a issues reducer", () => {
     const state: IIssues = issues(undefined, action);
 
     // Then
-    expect(state).toEqual({
-      cache: new Map<string, ICachedIssue>(),
-      settings: {
-        currentPage: 1,
-        perPage: 10,
-      },
-    });
+    expect(state).toEqual({ cache: new Map<string, ICachedIssue>() });
   });
 
   test("issues() correctly handle addIssuesAction", () => {
     // Given
     const settings: IIssuesSettings = {
-      currentPage: 1,
+      pageNumber: 1,
       login: "login",
       perPage: 10,
       repo: "repo",

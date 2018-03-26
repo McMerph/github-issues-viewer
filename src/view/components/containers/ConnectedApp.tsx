@@ -3,13 +3,13 @@ import { Dispatch } from "redux";
 import actionCreator from "../../../model/actionCreator";
 import IStore from "../../../model/IStore";
 import App, { IDispatchFromProps, IStateFromProps } from "./App";
-import { IRetrieveIssuesParameters } from "../../../model/api/retrieveIssues";
+import IIssuesSettings from "../../../model/entities/IIssuesSettings";
 
 const mapStateToProps: (store: IStore) => IStateFromProps = (store) => store;
 
 const mapDispatchToProps: (dispatch: Dispatch<IStore>) => IDispatchFromProps = (dispatch) => ({
   actions: {
-    onRetrieveIssues: (parameters: IRetrieveIssuesParameters) =>
+    onRetrieveIssues: (parameters: IIssuesSettings) =>
       dispatch(actionCreator.retrieveIssues(parameters)),
     onRetrieveUser: (login: string) =>
       dispatch(actionCreator.retrieveUser(login)),

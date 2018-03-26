@@ -2,13 +2,6 @@ import IIssue from "../entities/IIssue";
 import IIssuesSettings from "../entities/IIssuesSettings";
 import URIS from "./uris";
 
-interface IRetrieveIssuesParameters {
-  login: string;
-  repo: string;
-  pageNumber: number;
-  perPage: number;
-}
-
 interface IRetrieveIssuesResponse {
   settings: IIssuesSettings;
   page: IIssue[];
@@ -33,7 +26,7 @@ function isIssueJsonArray(issues: any): issues is IIssueJson[] {
 // TODO Introduce parameters object
 // TODO Make etag optional?
 // TODO Use etag
-function retrieveIssues(parameters: IRetrieveIssuesParameters, requestETag?: string): Promise<IRetrieveIssuesResponse> {
+function retrieveIssues(parameters: IIssuesSettings, requestETag?: string): Promise<IRetrieveIssuesResponse> {
   const { login, repo, pageNumber, perPage } = parameters;
   let eTag: string;
   let link: string | undefined;
@@ -66,7 +59,7 @@ function retrieveIssues(parameters: IRetrieveIssuesParameters, requestETag?: str
           eTag,
           link,
           page,
-          settings: { login, perPage, repo, currentPage: pageNumber },
+          settings: { login, perPage, repo, pageNumber },
         };
       } else {
         throw new Error("Invalid format");
@@ -81,4 +74,4 @@ function retrieveIssues(parameters: IRetrieveIssuesParameters, requestETag?: str
 }
 
 export default retrieveIssues;
-export { IRetrieveIssuesParameters, IRetrieveIssuesResponse };
+export { IRetrieveIssuesResponse };

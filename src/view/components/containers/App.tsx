@@ -1,11 +1,11 @@
 import * as React from "react";
-import { IRetrieveIssuesParameters } from "../../../model/api/retrieveIssues";
 import IReposPage from "../../../model/entities/IReposPage";
 import IUser from "../../../model/entities/IUser";
 import IssuesInfo from "../presentational/issues-info";
 import ReposInfo from "../presentational/repos-info";
 import UserInfo from "../presentational/user-info";
 import IIssues from "../../../model/entities/IIssues";
+import IIssuesSettings from "../../../model/entities/IIssuesSettings";
 
 export interface IStateFromProps {
   issues: IIssues;
@@ -15,7 +15,7 @@ export interface IStateFromProps {
 
 export interface IDispatchFromProps {
   actions: {
-    onRetrieveIssues(parameters: IRetrieveIssuesParameters): void;
+    onRetrieveIssues(parameters: IIssuesSettings): void;
     onRetrieveUser(login: string): void;
     onRetrieveRepos(login: string): void;
   };

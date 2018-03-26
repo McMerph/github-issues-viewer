@@ -4,10 +4,6 @@ import IIssues, { ICachedIssue } from "../entities/IIssues";
 
 const defaultState: IIssues = {
   cache: new Map<string, ICachedIssue>(),
-  settings: {
-    currentPage: 1,
-    perPage: 10,
-  },
 };
 
 export const issues = (state: IIssues = defaultState, action: IAction): IIssues => {

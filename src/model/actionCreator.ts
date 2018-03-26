@@ -2,7 +2,7 @@ import * as parse from "parse-link-header";
 import { Dispatch } from "redux";
 import ActionType from "./actions/ActionType";
 import IAddIssuesAction from "./actions/IAddIssuesAction";
-import retrieveIssues, { IRetrieveIssuesParameters } from "./api/retrieveIssues";
+import retrieveIssues from "./api/retrieveIssues";
 import retrieveRepos from "./api/retrieveRepos";
 import retrieveUser from "./api/retrieveUser";
 import IIssuesSettings from "./entities/IIssuesSettings";
@@ -44,7 +44,7 @@ const actionCreator = {
       retrievePage();
     };
   },
-  retrieveIssues: (parameters: IRetrieveIssuesParameters) => {
+  retrieveIssues: (parameters: IIssuesSettings) => {
     return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
       // TODO Implement
       // console.log(getState());
@@ -56,7 +56,7 @@ const actionCreator = {
           const parsedLink = parse(link);
           const lastPage: number = (parsedLink && parsedLink.last) ?
             parseInt(parsedLink.last.page, 10) :
-            issuesResponse.settings.currentPage;
+            issuesResponse.settings.pageNumber;
           const settings: IIssuesSettings = { ...issuesResponse.settings };
           const addIssuesAction: IAddIssuesAction = {
             payload: { page, settings, eTag, lastPage },
