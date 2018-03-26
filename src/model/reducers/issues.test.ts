@@ -15,14 +15,14 @@ describe("issues() is a issues reducer", () => {
     const state: IIssues = issues(undefined, action);
 
     // Then
-    expect(state).toEqual({ cache: new Map<string, ICachedIssue>() });
+    expect(state).toEqual({ cache: [] });
   });
 
   test("issues() correctly handle addIssuesAction", () => {
     // Given
     const settings: IIssuesSettings = {
-      pageNumber: 1,
       login: "login",
+      pageNumber: 1,
       perPage: 10,
       repo: "repo",
     };
@@ -39,8 +39,7 @@ describe("issues() is a issues reducer", () => {
       payload: { page, settings, eTag, lastPage },
       type: ActionType.AddIssues,
     };
-    const cache: Map<string, ICachedIssue> = new Map();
-    cache.set(JSON.stringify(settings), { page, eTag });
+    const cache: ICachedIssue[] = [{ eTag, page, settings: JSON.stringify(settings), lastPage }];
 
     // When
     const state: IIssues = issues(undefined, addIssuesAction);

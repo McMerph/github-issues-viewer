@@ -5,8 +5,10 @@ import IAddIssuesAction from "./actions/IAddIssuesAction";
 import retrieveIssues from "./api/retrieveIssues";
 import retrieveRepos from "./api/retrieveRepos";
 import retrieveUser from "./api/retrieveUser";
-import IIssuesSettings from "./entities/IIssuesSettings";
+import IIssuesSettings, { isIssuesSettings } from "./entities/IIssuesSettings";
 import IStore from "./IStore";
+import { ICachedIssue } from "./entities/IIssues";
+import NotModifiedError from "./api/NotModifiedError";
 
 const actionCreator = {
   retrieveUser: (login: string) => {
@@ -46,11 +48,23 @@ const actionCreator = {
   },
   retrieveIssues: (parameters: IIssuesSettings) => {
     return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
-      // TODO Implement
-      // console.log(getState());
-      // getState().issues.cache.get()
+      const cachedPage: ICachedIssue | undefined = getState().issues.cache
+        .find((pageInJsonFormat) => {
+          const cachedSettings = JSON.parse(pageInJsonFormat.settings);
+          if (isIssuesSettings(cachedSettings)) {
+            return cachedSettings.login === parameters.login &&
+              cachedSettings.repo === parameters.repo &&
+              cachedSettings.pageNumber === parameters.pageNumber &&
+              cachedSettings.perPage === parameters.perPage;
+          }
+          return false;
+        });
+      let requestETag: string | undefined;
+      if (cachedPage) {
+        requestETag = cachedPage.eTag;
+      }
 
-      retrieveIssues(parameters)
+      retrieveIssues(parameters, requestETag)
         .then((issuesResponse) => {
           const { page, link, eTag } = issuesResponse;
           const parsedLink = parse(link);
@@ -65,8 +79,24 @@ const actionCreator = {
           dispatch(addIssuesAction);
         })
         .catch((error) => {
-          // TODO handle error
-          console.error(error);
+          if (error instanceof NotModifiedError) {
+            console.log("NoContendOrNotModifiedError!");
+            if (cachedPage && requestETag) {
+              const addIssuesAction: IAddIssuesAction = {
+                payload: {
+                  eTag: requestETag,
+                  lastPage: cachedPage.lastPage,
+                  page: cachedPage.page,
+                  settings: parameters,
+                },
+                type: ActionType.AddIssues,
+              };
+              dispatch(addIssuesAction);
+            }
+          } else {
+            // TODO handle error
+            console.error("There has been a problem with your fetch operation: " + error.message);
+          }
         });
     };
   },

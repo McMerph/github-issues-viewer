@@ -1,6 +1,7 @@
 import IIssue from "../entities/IIssue";
 import IIssuesSettings from "../entities/IIssuesSettings";
 import URIS from "./uris";
+import NotModifiedError from "./NotModifiedError";
 
 interface IRetrieveIssuesResponse {
   settings: IIssuesSettings;
@@ -23,27 +24,30 @@ function isIssueJsonArray(issues: any): issues is IIssueJson[] {
       typeof issue.created_at === "string");
 }
 
-// TODO Introduce parameters object
-// TODO Make etag optional?
-// TODO Use etag
 function retrieveIssues(parameters: IIssuesSettings, requestETag?: string): Promise<IRetrieveIssuesResponse> {
   const { login, repo, pageNumber, perPage } = parameters;
   let eTag: string;
   let link: string | undefined;
 
+  let requestHeaders: {} = {
+    Accept: "application/vnd.github.v3+json",
+  };
+  if (requestETag) {
+    requestHeaders = { ...requestHeaders, "If-None-Match": requestETag };
+  }
   // TODO DRY
   return fetch(`${URIS.ROOT}/${URIS.REPOS}/${login}/${repo}/${URIS.ISSUES}?page=${pageNumber}&per_page=${perPage}`, {
-    headers: {
-      Accept: "application/vnd.github.v3+json",
-    },
+    headers: requestHeaders,
     method: "get",
   })
     .then((response) => {
-      if (response.ok) {
+      if (response.status === 200) {
         eTag = response.headers.get("etag") || "";
         link = response.headers.get("link") || undefined;
 
         return response.json();
+      } else if (response.status === 304) {
+        throw new NotModifiedError();
       } else {
         throw new Error("Network response was not ok");
       }
@@ -55,21 +59,11 @@ function retrieveIssues(parameters: IIssuesSettings, requestETag?: string): Prom
           number: issue.number,
           title: issue.title,
         }));
-        return {
-          eTag,
-          link,
-          page,
-          settings: { login, perPage, repo, pageNumber },
-        };
+        const settings: IIssuesSettings = { login, perPage, repo, pageNumber };
+        return { eTag, link, page, settings };
       } else {
         throw new Error("Invalid format");
       }
-    })
-    .catch((error) => {
-      // TODO Handle error?
-      throw new Error("There has been a problem with your fetch operation: " + error.message);
-      // console.error("There has been a problem with your fetch operation: " + error.message);
-      // return { page: { apiState: ApiState.Error } };
     });
 }
 
