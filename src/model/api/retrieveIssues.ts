@@ -33,7 +33,7 @@ function isIssueJsonArray(issues: any): issues is IIssueJson[] {
 // TODO Introduce parameters object
 // TODO Make etag optional?
 // TODO Use etag
-function retrieveIssues(parameters: IRetrieveIssuesParameters): Promise<IRetrieveIssuesResponse> {
+function retrieveIssues(parameters: IRetrieveIssuesParameters, requestETag?: string): Promise<IRetrieveIssuesResponse> {
   const { login, repo, pageNumber, perPage } = parameters;
   let eTag: string;
   let link: string | undefined;

@@ -28,7 +28,6 @@ describe("issues() is a issues reducer", () => {
     // Given
     const settings: IIssuesSettings = {
       currentPage: 1,
-      lastPage: 3,
       login: "login",
       perPage: 10,
       repo: "repo",
@@ -40,9 +39,10 @@ describe("issues() is a issues reducer", () => {
         title: "title1",
       },
     ];
+    const lastPage = 3;
     const eTag: string = "eTag";
     const addIssuesAction: IAddIssuesAction = {
-      payload: { page, settings, eTag },
+      payload: { page, settings, eTag, lastPage },
       type: ActionType.AddIssues,
     };
     const cache: Map<string, ICachedIssue> = new Map();
@@ -52,6 +52,6 @@ describe("issues() is a issues reducer", () => {
     const state: IIssues = issues(undefined, addIssuesAction);
 
     // Then
-    expect(state).toEqual({ cache, page, settings });
+    expect(state).toEqual({ cache, page, settings, lastPage });
   });
 });

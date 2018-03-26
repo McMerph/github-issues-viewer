@@ -12,12 +12,12 @@ const defaultState: IIssues = {
 
 export const issues = (state: IIssues = defaultState, action: IAction): IIssues => {
   if (isAddIssuesAction(action)) {
-    const { page, eTag } = action.payload;
+    const { page, eTag, lastPage } = action.payload;
     const { settings } = action.payload;
     const cache: Map<string, ICachedIssue> = new Map(state.cache);
     cache.set(JSON.stringify(settings), { page, eTag });
 
-    return { page, settings, cache };
+    return { page, settings, cache, lastPage };
   } else {
     return state;
   }

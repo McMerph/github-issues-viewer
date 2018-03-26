@@ -46,7 +46,8 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
   }
 
   public render(): React.ReactNode {
-    const { currentPage, lastPage } = this.props.issues.settings;
+    const { lastPage } = this.props.issues;
+    const { currentPage } = this.props.issues.settings;
     const { login, repo } = this.props.issues.settings;
     const page: IIssue[] | undefined = this.props.issues.page;
 
@@ -116,7 +117,8 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
   }
 
   private hasNext(): boolean {
-    const { login, repo, currentPage, lastPage } = this.props.issues.settings;
+    const { lastPage } = this.props.issues;
+    const { login, repo, currentPage } = this.props.issues.settings;
 
     return !!login && !!repo && !!lastPage && currentPage < lastPage;
   }

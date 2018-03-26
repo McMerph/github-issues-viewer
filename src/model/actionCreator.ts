@@ -46,17 +46,20 @@ const actionCreator = {
   },
   retrieveIssues: (parameters: IRetrieveIssuesParameters) => {
     return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
-      console.log(getState());
+      // TODO Implement
+      // console.log(getState());
+      // getState().issues.cache.get()
+
       retrieveIssues(parameters)
         .then((issuesResponse) => {
-          const { page, link } = issuesResponse;
+          const { page, link, eTag } = issuesResponse;
           const parsedLink = parse(link);
           const lastPage: number = (parsedLink && parsedLink.last) ?
             parseInt(parsedLink.last.page, 10) :
             issuesResponse.settings.currentPage;
-          const settings: IIssuesSettings = { ...issuesResponse.settings, lastPage };
+          const settings: IIssuesSettings = { ...issuesResponse.settings };
           const addIssuesAction: IAddIssuesAction = {
-            payload: { page, settings, eTag: issuesResponse.eTag },
+            payload: { page, settings, eTag, lastPage },
             type: ActionType.AddIssues,
           };
           dispatch(addIssuesAction);

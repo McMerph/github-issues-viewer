@@ -12,6 +12,7 @@ interface IAddIssuesActionPayload {
   settings: IIssuesSettings;
   page: IIssue[];
   eTag: string;
+  lastPage: number;
 }
 
 // TODO Split to own file?

@@ -10,4 +10,5 @@ export default interface IIssues {
   cache: Map<string, ICachedIssue>;
   page?: IIssue[];
   settings: IIssuesSettings;
+  lastPage?: number;
 }
