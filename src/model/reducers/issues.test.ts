@@ -6,6 +6,7 @@ import IIssues from "../entities/IIssues";
 import IIssuesSettings from "../entities/IIssuesSettings";
 import { issues } from "./issues";
 import ICachedPage from "../entities/ICachedPage";
+import ApiState from "../entities/ApiState";
 
 describe("issues() is a issues reducer", () => {
   test("issues() instantiates with correct initial state", () => {
@@ -16,7 +17,10 @@ describe("issues() is a issues reducer", () => {
     const state: IIssues = issues(undefined, action);
 
     // Then
-    expect(state).toEqual({ cache: [] });
+    expect(state).toEqual({
+      apiState: ApiState.Idle,
+      cache: [],
+    });
   });
 
   test("issues() correctly handle addIssuesAction", () => {
@@ -46,6 +50,12 @@ describe("issues() is a issues reducer", () => {
     const state: IIssues = issues(undefined, addIssuesAction);
 
     // Then
-    expect(state).toEqual({ cache, page, settings, lastPage });
+    expect(state).toEqual({
+      apiState: ApiState.Idle,
+      cache,
+      lastPage,
+      page,
+      settings,
+    });
   });
 });

@@ -50,7 +50,7 @@ const HeadTitle = styled.div`
   margin: 16px 0;
 `;
 
-const Navigation = styled.div`
+const StyledNavigation = styled.div`
   display: flex;
   align-items: center;
 `;
@@ -59,7 +59,12 @@ const NavigationInfo = styled.div`
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
 `;
 
-const Issue = Card.extend`
+const Ul = styled.ul`
+  margin: 0;
+  padding: 0;
+`;
+
+const StyledIssue = Card.extend`
   box-shadow:
     0 1px 5px 0 rgba(0, 0, 0, 0.2),
     0 2px 2px 0 rgba(0, 0, 0, 0.14),
@@ -67,7 +72,8 @@ const Issue = Card.extend`
   padding: 16px;
   margin: 10px auto;
   background: ${COLORS.COLOR3};
-`;
+  list-style: none;
+`.withComponent("li");
 
 const IssueHeader = styled.div`
   display: flex;
@@ -123,19 +129,20 @@ const NextButton = Button.extend`
 `;
 
 export {
+  BackButton,
   Fieldset,
-  Legend,
-  Label,
-  Input,
   Head,
   HeadTitle,
-  Navigation,
-  NavigationInfo,
-  Issue,
-  IssueHeader,
+  Input,
+  StyledIssue,
   IssueDateTime,
+  IssueHeader,
   IssueTitle,
-  RetrieveButton,
-  BackButton,
+  Label,
+  Legend,
+  NavigationInfo,
   NextButton,
+  RetrieveButton,
+  StyledNavigation,
+  Ul,
 };

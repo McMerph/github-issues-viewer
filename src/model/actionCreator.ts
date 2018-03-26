@@ -9,6 +9,8 @@ import IIssuesSettings, { isIssuesSettings } from "./entities/IIssuesSettings";
 import IStore from "./IStore";
 import NotModifiedError from "./api/NotModifiedError";
 import ICachedPage from "./entities/ICachedPage";
+import ApiState from "./entities/ApiState";
+import ISetIssuesApiStateAction from "./actions/ISetIssuesApiStateAction";
 
 const actionCreator = {
   retrieveUser: (login: string) => {
@@ -77,6 +79,11 @@ const actionCreator = {
             type: ActionType.AddIssues,
           };
           dispatch(addIssuesAction);
+          const setSuccessAction: ISetIssuesApiStateAction = {
+            state: ApiState.Success,
+            type: ActionType.SetIssuesApiState,
+          };
+          dispatch(setSuccessAction);
         })
         .catch((error) => {
           if (error instanceof NotModifiedError) {
@@ -91,14 +98,25 @@ const actionCreator = {
                 type: ActionType.AddIssues,
               };
               dispatch(addIssuesAction);
+              const setSuccessAction: ISetIssuesApiStateAction = {
+                state: ApiState.Success,
+                type: ActionType.SetIssuesApiState,
+              };
+              dispatch(setSuccessAction);
             }
           } else {
-            // TODO handle error
+            const setErrorAction: ISetIssuesApiStateAction = {
+              state: ApiState.Error,
+              type: ActionType.SetIssuesApiState,
+            };
+            dispatch(setErrorAction);
+            // TODO handle error?
             console.error("There has been a problem with your fetch operation: " + error.message);
           }
         });
     };
   },
+  setIssuesApiState: (state: ApiState) => ({ type: ActionType.SetIssuesApiState, state }),
 };
 
 export default actionCreator;
