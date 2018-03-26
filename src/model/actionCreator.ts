@@ -68,7 +68,12 @@ const actionCreator = {
             issuesResponse.settings.pageNumber;
           const settings: IIssuesSettings = { ...issuesResponse.settings };
           const addIssuesAction: IAddIssuesAction = {
-            payload: { page, settings, eTag, lastPage },
+            payload: {
+              eTag,
+              lastPage,
+              page,
+              settings,
+            },
             type: ActionType.AddIssues,
           };
           dispatch(addIssuesAction);

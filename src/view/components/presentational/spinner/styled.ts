@@ -1,45 +1,43 @@
-import { keyframes } from "styled-components";
-import styled from "./styled-components";
+import styled, { keyframes } from "styled-components";
 
-const animation = keyframes`
+const Wrapper = styled.div`
+  width: 40px;
+  height: 40px;
+  color: rgb(156, 39, 176);
+  margin: 0 auto;
+`;
+
+const rotateAnimation = keyframes`
   to { transform: rotate(360deg); }
 `;
 
-const StyledSpinner = styled.div`
-  border-radius: 50%;
-  color: #9c27b0;
-  font-size: 11px;
-  margin: 48px auto;
-  position: relative;
-  width: 10em;
-  height: 10em;
-  box-shadow: inset 0 0 0 1em;
-
-  &::before,
-  &::after {
-    position: absolute;
-    content: '';
-    border-radius: 50%;
-    background: ${(props) => props.theme.backgroundColor};
-    width: 5.2em;
-    height: 10.2em;
+const dashAnimation = keyframes`
+  0% {
+    stroke-dasharray: 1px, 200px;
+    stroke-dashoffset: 0;
   }
 
-  &::before {
-    border-radius: 10.2em 0 0 10.2em;
-    top: -0.1em;
-    left: -0.1em;
-    transform-origin: 5.2em 5.1em;
-    animation: ${animation} 2s infinite ease 1.5s;
+  50% {
+    stroke-dasharray: 100px, 200px;
+    stroke-dashoffset: -15px;
   }
 
-  &::after {
-    border-radius: 0 10.2em 10.2em 0;
-    top: -0.1em;
-    left: 5.1em;
-    transform-origin: 0 5.1em;
-    animation: ${animation} 2s infinite ease;
+  100% {
+    stroke-dasharray: 100px, 200px;
+    stroke-dashoffset: -120px;
   }
 `;
 
-export { StyledSpinner };
+const Svg = styled.svg`
+  animation: ${rotateAnimation} 1.4s linear infinite;
+`;
+
+const Circle = styled.circle`
+  stroke: currentColor;
+  stroke-linecap: round;
+  animation: ${dashAnimation} 1.4s ease-in-out infinite;
+  stroke-dasharray: 80px, 200px;
+  stroke-dashoffset: 0;
+`;
+
+export { Wrapper, Svg, Circle };

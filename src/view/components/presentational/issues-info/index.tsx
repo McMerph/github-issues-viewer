@@ -136,7 +136,7 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
           {login && repo && <HeadTitle>{login} / {repo}</HeadTitle>}
           <Navigation/>
         </Head>
-        {issues.apiState === ApiState.Loading ? <Spinner backgroundColor="#e2e1e0"/> : (<Ul>
+        {issues.apiState === ApiState.Loading ? <Spinner/> : (<Ul>
           {page && page.length > 0 && page.map((issue, issueIndex) =>
             <Issue issue={issue} key={issueIndex}/>)}
         </Ul>)}
