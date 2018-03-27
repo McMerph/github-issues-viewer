@@ -1,7 +1,7 @@
-import IRepo from "../entities/IRepo";
-import IReposSettings from "../entities/IReposSettings";
-import URIS from "./uris";
+import IRepo from "../entities/repos/IRepo";
+import IReposSettings from "../entities/repos/IReposSettings";
 import NotModifiedError from "./NotModifiedError";
+import URIS from "./uris";
 
 interface IRetrieveReposResponse {
   settings: IReposSettings;

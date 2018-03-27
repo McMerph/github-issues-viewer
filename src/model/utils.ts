@@ -1,18 +1,18 @@
-import IIssuesSettings, { isIssuesSettings } from "./entities/IIssuesSettings";
-import IReposSettings, { isReposSettings } from "./entities/IReposSettings";
+import IIssuesRequest, { isIssuesRequest } from "./entities/issues/IIssuesRequest";
+import IReposSettings, { isReposSettings } from "./entities/repos/IReposSettings";
 
-// TODO Rename to setings1, settings2
-const equalsIssuesSettings = (cachedSettings: {}, settings: IIssuesSettings): boolean => {
-  if (isIssuesSettings(cachedSettings)) {
-    return cachedSettings.login === settings.login &&
-      cachedSettings.repo === settings.repo &&
-      cachedSettings.pageNumber === settings.pageNumber &&
-      cachedSettings.perPage === settings.perPage;
+const equalsIssuesRequests = (request1: IIssuesRequest, request2: IIssuesRequest): boolean => {
+  if (isIssuesRequest(request1)) {
+    return request1.login === request2.login &&
+      request1.repo === request2.repo &&
+      request1.pageNumber === request2.pageNumber &&
+      request1.perPage === request2.perPage;
   } else {
     return false;
   }
 };
 
+// TODO Rename to request1, request2
 const equalsReposSettings = (cachedSettings: {}, settings: IReposSettings): boolean => {
   if (isReposSettings(cachedSettings)) {
     return cachedSettings.login === settings.login &&
@@ -22,4 +22,4 @@ const equalsReposSettings = (cachedSettings: {}, settings: IReposSettings): bool
   }
 };
 
-export { equalsIssuesSettings, equalsReposSettings };
+export { equalsIssuesRequests, equalsReposSettings };

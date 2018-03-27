@@ -1,6 +1,6 @@
 import * as React from "react";
 import ApiState from "../../../../model/entities/ApiState";
-import IIssues from "../../../../model/entities/IIssues";
+import IIssues from "../../../../model/entities/issues/IIssues";
 import { BackButton, Info, NextButton, Wrapper } from "./styled";
 
 interface IProps {
@@ -13,14 +13,15 @@ interface IProps {
 
 const Navigation: React.SFC<IProps> = (props) => {
   const { issues, onPrevious, onNext } = props;
-  const { lastPage } = issues;
 
   const hasPrevious: boolean = props.hasPrevious();
   const hasNext: boolean = props.hasNext();
-  const loading: boolean = issues.apiState === ApiState.Loading;
-  const pageNumber: number | undefined = issues.settings && issues.settings.pageNumber;
+  const loading: boolean = issues.apiStatus.state === ApiState.Loading || false;
+  const success: boolean = issues.apiStatus.state === ApiState.Success || false;
+  const pageNumber: number | undefined = issues.request && issues.request.pageNumber;
+  const lastPage: number | undefined = issues.response && issues.response.lastPageNumber || undefined;
 
-  if (issues.apiState === ApiState.Success && (hasPrevious || hasNext)) {
+  if (success && (hasPrevious || hasNext)) {
     return (
       <Wrapper>
         <BackButton
@@ -30,7 +31,7 @@ const Navigation: React.SFC<IProps> = (props) => {
         >
           ← Назад
         </BackButton>
-        {pageNumber && <Info>{pageNumber} из {lastPage}</Info>}
+        {pageNumber && lastPage && <Info>{pageNumber} из {lastPage}</Info>}
         <NextButton
           type="button"
           disabled={!hasNext || loading}

@@ -1,5 +1,5 @@
 import * as React from "react";
-import IIssue from "../../../../model/entities/IIssue";
+import IIssue from "../../../../model/entities/issues/IIssue";
 import { DateTime, Header, Title, Wrapper } from "./styled";
 
 interface IProps {

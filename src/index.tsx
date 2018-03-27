@@ -10,8 +10,6 @@ import "whatwg-fetch";
 
 import "./view/inject-global";
 
-// TODO Save etag in localhistory?
-
 document.addEventListener("DOMContentLoaded", () => {
   render(
     <Provider store={store}><ConnectedApp/></Provider>,

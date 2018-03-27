@@ -1,5 +1,5 @@
-import IRepo, { isRepo } from "../entities/IRepo";
-import IReposSettings, { isReposSettings } from "../entities/IReposSettings";
+import IRepo, { isRepo } from "../entities/repos/IRepo";
+import IReposSettings, { isReposSettings } from "../entities/repos/IReposSettings";
 import ActionType from "./ActionType";
 import IAction from "./IAction";
 

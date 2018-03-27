@@ -1,20 +1,21 @@
 import * as parse from "parse-link-header";
 import { Dispatch } from "redux";
 import ActionType from "./actions/ActionType";
-import IAddIssuesAction from "./actions/IAddIssuesAction";
+import ISetIssuesErrorAction from "./actions/ISetIssuesErrorAction";
+import ISetReposAction from "./actions/ISetReposAction";
+import IUpdateIssuesAction from "./actions/IUpdateIssuesAction";
+import NotModifiedError from "./api/NotModifiedError";
 import retrieveIssues from "./api/retrieveIssues";
 import retrieveRepos from "./api/retrieveRepos";
 import retrieveUser from "./api/retrieveUser";
-import IIssuesSettings from "./entities/IIssuesSettings";
-import IStore from "./IStore";
-import NotModifiedError from "./api/NotModifiedError";
-import ICachedIssuesPage from "./entities/ICachedIssuesPage";
 import ApiState from "./entities/ApiState";
-import ISetIssuesApiStateAction from "./actions/ISetIssuesApiStateAction";
-import { equalsIssuesSettings, equalsReposSettings } from "./utils";
-import IReposSettings from "./entities/IReposSettings";
-import ICachedReposPage from "./entities/ICachedReposPage";
-import ISetReposAction from "./actions/ISetReposAction";
+import IIssuesCacheEntry from "./entities/issues/IIssuesCacheEntry";
+import IIssuesRequest from "./entities/issues/IIssuesRequest";
+import IIssuesResponse from "./entities/issues/IIssuesResponse";
+import ICachedReposPage from "./entities/repos/ICachedReposPage";
+import IReposSettings from "./entities/repos/IReposSettings";
+import IStore from "./IStore";
+import { equalsIssuesRequests, equalsReposSettings } from "./utils";
 
 const actionCreator = {
   retrieveUser: (login: string) => {
@@ -74,73 +75,43 @@ const actionCreator = {
       retrievePage();
     };
   },
-  retrieveIssues: (parameters: IIssuesSettings) => {
+  retrieveIssues: (request: IIssuesRequest) => {
     return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
-      const cachedPage: ICachedIssuesPage | undefined = getState().issues.cache
-        .find((pageInJsonFormat) =>
-          equalsIssuesSettings(JSON.parse(pageInJsonFormat.settings), parameters));
-      let requestETag: string | undefined;
-      if (cachedPage) {
-        requestETag = cachedPage.eTag;
-      }
+      dispatch({ type: ActionType.SetIssuesLoading });
 
-      retrieveIssues(parameters, requestETag)
+      const handleSuccessResponse = (response: IIssuesResponse, eTag: string): void => {
+        const updateIssuesAction: IUpdateIssuesAction = {
+          apiStatus: { state: ApiState.Success },
+          eTag, request, response, type: ActionType.UpdateIssues,
+        };
+        dispatch(updateIssuesAction);
+      };
+
+      const cacheEntry: IIssuesCacheEntry | undefined = getState().issues.cache
+        .find((entry) => equalsIssuesRequests(entry.request, request));
+      const requestETag: string | undefined = cacheEntry && cacheEntry.eTag;
+
+      retrieveIssues(request, requestETag)
         .then((issuesResponse) => {
-          const { page, link, eTag } = issuesResponse;
-          const parsedLink = parse(link);
-          const lastPage: number = (parsedLink && parsedLink.last) ?
-            parseInt(parsedLink.last.page, 10) :
-            issuesResponse.settings.pageNumber;
-          const settings: IIssuesSettings = { ...issuesResponse.settings };
-          const setSuccessAction: ISetIssuesApiStateAction = {
-            state: ApiState.Success,
-            type: ActionType.SetIssuesApiState,
-          };
-          dispatch(setSuccessAction);
-          const addIssuesAction: IAddIssuesAction = {
-            payload: {
-              eTag,
-              lastPage,
-              page,
-              settings,
-            },
-            type: ActionType.AddIssues,
-          };
-          dispatch(addIssuesAction);
+          const { lastPageNumber, page, eTag } = issuesResponse;
+          handleSuccessResponse({ lastPageNumber, page }, eTag);
         })
         .catch((error) => {
-          if (error instanceof NotModifiedError) {
-            if (cachedPage && requestETag) {
-              const setSuccessAction: ISetIssuesApiStateAction = {
-                state: ApiState.Success,
-                type: ActionType.SetIssuesApiState,
-              };
-              dispatch(setSuccessAction);
-              const addIssuesAction: IAddIssuesAction = {
-                payload: {
-                  eTag: requestETag,
-                  lastPage: cachedPage.lastPage,
-                  page: cachedPage.page,
-                  settings: parameters,
-                },
-                type: ActionType.AddIssues,
-              };
-              dispatch(addIssuesAction);
-            }
+          if (error instanceof NotModifiedError && cacheEntry && requestETag) {
+            const { lastPageNumber, page } = cacheEntry.response;
+            handleSuccessResponse({ lastPageNumber, page }, requestETag);
           } else {
-            const setErrorAction: ISetIssuesApiStateAction = {
-              error: "There has been a problem with your fetch operation: " + error.message,
-              state: ApiState.Error,
-              type: ActionType.SetIssuesApiState,
+            const setErrorAction: ISetIssuesErrorAction = {
+              error: `There has been a problem with your fetch operation: ${error.message}`,
+              type: ActionType.SetIssuesError,
             };
             dispatch(setErrorAction);
-            // TODO handle error?
-            console.error("There has been a problem with your fetch operation: " + error.message);
+            console.error(`There has been a problem with your fetch operation: ${error.message}`);
           }
         });
     };
   },
-  setIssuesApiState: (state: ApiState) => ({ type: ActionType.SetIssuesApiState, state }),
+  setIssuesLoading: () => ({ type: ActionType.SetIssuesLoading }),
 };
 
 export default actionCreator;

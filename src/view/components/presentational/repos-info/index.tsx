@@ -1,6 +1,6 @@
 import * as React from "react";
 import { FormEvent } from "react";
-import IRepos from "../../../../model/entities/IRepos";
+import IRepos from "../../../../model/entities/repos/IRepos";
 import AutoCompleteTest from "../auto-complete-test";
 
 interface IProps {
@@ -45,10 +45,7 @@ export default class ReposInfo extends React.PureComponent<IProps, IState> {
           {/*))}*/}
         </form>
 
-        {/*TODO Implement*/}
-        <AutoCompleteTest
-          items={reposNames}
-        />
+        <AutoCompleteTest items={reposNames}/>
       </React.Fragment>
     );
   }

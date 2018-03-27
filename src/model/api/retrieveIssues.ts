@@ -1,14 +1,9 @@
-import IIssue from "../entities/IIssue";
-import IIssuesSettings from "../entities/IIssuesSettings";
-import URIS from "./uris";
+import * as parse from "parse-link-header";
+import IIssue from "../entities/issues/IIssue";
+import IIssuesRequest from "../entities/issues/IIssuesRequest";
+import IRetrieveIssuesResponse from "./IRetrieveIssuesResponse";
 import NotModifiedError from "./NotModifiedError";
-
-interface IRetrieveIssuesResponse {
-  settings: IIssuesSettings;
-  page: IIssue[];
-  link?: string;
-  eTag: string;
-}
+import URIS from "./uris";
 
 interface IIssueJson {
   title: string;
@@ -24,18 +19,18 @@ function isIssueJsonArray(issues: any): issues is IIssueJson[] {
       typeof issue.created_at === "string");
 }
 
-function retrieveIssues(parameters: IIssuesSettings, requestETag?: string): Promise<IRetrieveIssuesResponse> {
-  const { login, repo, pageNumber, perPage } = parameters;
+function retrieveIssues(request: IIssuesRequest, requestETag?: string): Promise<IRetrieveIssuesResponse> {
+  const { login, repo, pageNumber, perPage } = request;
   let eTag: string;
   let link: string | undefined;
 
+  // TODO DRY
   let requestHeaders: {} = {
     Accept: "application/vnd.github.v3+json",
   };
   if (requestETag) {
     requestHeaders = { ...requestHeaders, "If-None-Match": requestETag };
   }
-  // TODO DRY
   return fetch(`${URIS.ROOT}/${URIS.REPOS}/${login}/${repo}/${URIS.ISSUES}?page=${pageNumber}&per_page=${perPage}`, {
     headers: requestHeaders,
     method: "get",
@@ -47,6 +42,7 @@ function retrieveIssues(parameters: IIssuesSettings, requestETag?: string): Prom
 
         return response.json();
       } else if (response.status === 304) {
+        // TODO But it is not an error
         throw new NotModifiedError();
       } else {
         throw new Error("Network response was not ok");
@@ -55,12 +51,14 @@ function retrieveIssues(parameters: IIssuesSettings, requestETag?: string): Prom
     .then((json) => {
       if (isIssueJsonArray(json)) {
         const page: IIssue[] = json.map((issue) => ({
-          creationDate: new Date(issue.created_at).toString(),
+          creationDate: issue.created_at,
           number: issue.number,
           title: issue.title,
         }));
-        const settings: IIssuesSettings = { login, perPage, repo, pageNumber };
-        return { eTag, link, page, settings };
+        const parsedLink = link && parse(link);
+        const lastPageNumber: number = parsedLink && parsedLink.last ?
+          parseInt(parsedLink.last.page, 10) : request.pageNumber;
+        return { eTag, lastPageNumber, page };
       } else {
         throw new Error("Invalid format");
       }
@@ -68,4 +66,3 @@ function retrieveIssues(parameters: IIssuesSettings, requestETag?: string): Prom
 }
 
 export default retrieveIssues;
-export { IRetrieveIssuesResponse };

@@ -1,13 +1,12 @@
-// TODO Rename to request parameters?
-export default interface IIssuesSettings {
+export default interface IIssuesRequest {
   login: string;
   repo: string;
   pageNumber: number;
   perPage: number;
 }
 
-export function isIssuesSettings(object: any): object is IIssuesSettings {
-  const cast: IIssuesSettings = object as IIssuesSettings;
+export function isIssuesRequest(object: {}): object is IIssuesRequest {
+  const cast: IIssuesRequest = object as IIssuesRequest;
   return typeof cast.login === "string" &&
     typeof cast.perPage === "number" &&
     typeof cast.repo === "string" &&

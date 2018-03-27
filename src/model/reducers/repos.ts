@@ -1,8 +1,8 @@
 import IAction from "../actions/IAction";
 import { isSetReposAction } from "../actions/ISetReposAction";
 import ApiState from "../entities/ApiState";
-import ICachedReposPage from "../entities/ICachedReposPage";
-import IRepos from "../entities/IRepos";
+import ICachedReposPage from "../entities/repos/ICachedReposPage";
+import IRepos from "../entities/repos/IRepos";
 import { equalsReposSettings } from "../utils";
 
 const defaultState: IRepos = {

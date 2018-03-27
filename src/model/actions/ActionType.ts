@@ -1,10 +1,9 @@
 enum ActionType {
   SetRepos = "SET_REPOS",
   SetUser = "SET_USER",
-  SetIssuesApiState = "SET_ISSUES_API_STATE",
-
-  // TODO Rename to RETRIEVE_ISSUES?
-  AddIssues = "ADD_ISSUES",
+  SetIssuesError = "SET_ISSUES_ERROR",
+  SetIssuesLoading = "SET_ISSUES_LOADING",
+  UpdateIssues = "UPDATE_ISSUES",
 }
 
 export default ActionType;

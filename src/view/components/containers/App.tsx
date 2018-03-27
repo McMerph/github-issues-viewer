@@ -1,13 +1,11 @@
 import * as React from "react";
-import ApiState from "../../../model/entities/ApiState";
-import IIssues from "../../../model/entities/IIssues";
-import IIssuesSettings from "../../../model/entities/IIssuesSettings";
-import IRepos from "../../../model/entities/IRepos";
+import IIssues from "../../../model/entities/issues/IIssues";
+import IIssuesRequest from "../../../model/entities/issues/IIssuesRequest";
 import IUser from "../../../model/entities/IUser";
+import IRepos from "../../../model/entities/repos/IRepos";
 import ReposInfo from "../presentational/repos-info";
 import UserInfo from "../presentational/user-info";
 import Issues from "./Issues";
-import AutoCompleteTest from "../presentational/auto-complete-test";
 
 export interface IStateFromProps {
   issues: IIssues;
@@ -18,22 +16,14 @@ export interface IStateFromProps {
 // TODO DRY It is part of action creator interface
 export interface IDispatchFromProps {
   actions: {
-    onRetrieveIssues(parameters: IIssuesSettings): void;
+    onRetrieveIssues(request: IIssuesRequest): void;
     onRetrieveUser(login: string): void;
     onRetrieveRepos(login: string): void;
-    onSetIssuesApiState(state: ApiState): void;
   };
 }
 
-interface IAppProps extends IStateFromProps, IDispatchFromProps {
-}
-
-const App: React.SFC<IAppProps> = (props) => (
+const App: React.SFC<IStateFromProps & IDispatchFromProps> = (props) => (
   <React.Fragment>
-    <AutoCompleteTest
-      items={["foo", "bar", "baz"]}
-    />
-
     <UserInfo
       user={props.user}
       onRetrieveUser={props.actions.onRetrieveUser}
@@ -45,7 +35,6 @@ const App: React.SFC<IAppProps> = (props) => (
     <Issues
       issues={props.issues}
       onRetrieveIssues={props.actions.onRetrieveIssues}
-      onSetIssuesApiState={props.actions.onSetIssuesApiState}
     />
   </React.Fragment>
 );

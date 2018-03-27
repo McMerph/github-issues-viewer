@@ -1,7 +1,7 @@
 import * as React from "react";
 import { FormEvent } from "react";
 import ApiState from "../../../../model/entities/ApiState";
-import IIssues from "../../../../model/entities/IIssues";
+import IIssues from "../../../../model/entities/issues/IIssues";
 import Navigation from "../navigation";
 import { Fieldset, Input, Label, Legend, RetrieveButton, Title, Wrapper } from "./styled";
 
@@ -83,7 +83,7 @@ export default class IssuesPageRequest extends React.PureComponent<IProps, IIssu
           </Label>
           <RetrieveButton
             type="submit"
-            disabled={issues.apiState === ApiState.Loading}
+            disabled={issues.apiStatus.state === ApiState.Loading}
           >
             Retrieve
           </RetrieveButton>

@@ -1,40 +1,61 @@
+import ActionType from "../actions/ActionType";
 import IAction from "../actions/IAction";
-import { isAddIssuesAction } from "../actions/IAddIssuesAction";
-import { isSetIssuesApiStateAction } from "../actions/ISetIssuesApiStateAction";
+import { isSetIssuesErrorAction } from "../actions/ISetIssuesErrorAction";
+import { isUpdateIssuesAction } from "../actions/IUpdateIssuesAction";
 import ApiState from "../entities/ApiState";
-import ICachedIssuesPage from "../entities/ICachedIssuesPage";
-import IIssues from "../entities/IIssues";
-import { equalsIssuesSettings } from "../utils";
+import IIssues from "../entities/issues/IIssues";
+import IIssuesCacheEntry from "../entities/issues/IIssuesCacheEntry";
+import { equalsIssuesRequests } from "../utils";
 
 const defaultState: IIssues = {
-  apiState: ApiState.Idle,
+  apiStatus: {
+    state: ApiState.Idle,
+  },
   cache: [],
 };
 
 export const issues = (state: IIssues = defaultState, action: IAction): IIssues => {
-  if (isAddIssuesAction(action)) {
-    const { eTag, lastPage, page, settings } = action.payload;
-    const cache: ICachedIssuesPage[] = [
-      ...state.cache.filter((cachedPage) =>
-        !equalsIssuesSettings(JSON.parse(cachedPage.settings), settings)),
+  if (isUpdateIssuesAction(action)) {
+    const { eTag, request, apiStatus } = action;
+    const { lastPageNumber, page } = action.response;
+    const cache: IIssuesCacheEntry[] = [
+      ...state.cache.filter((cachedEntry) =>
+        !equalsIssuesRequests(cachedEntry.request, request)),
       {
         eTag,
-        lastPage,
-        page,
-        settings: JSON.stringify(settings),
+        request,
+        response: {
+          lastPageNumber,
+          page,
+        },
       },
     ];
 
     return {
-      apiState: state.apiState,
+      apiStatus,
       cache,
-      lastPage,
-      page,
-      settings,
+      request,
+      response: action.response,
     };
-  } else if (isSetIssuesApiStateAction(action)) {
-    return { cache: state.cache, apiState: action.state, apiError: action.error };
+  } else if (isSetIssuesErrorAction(action)) {
+    return {
+      apiStatus: {
+        error: action.error,
+        state: ApiState.Error,
+      },
+      cache: state.cache,
+    };
+
+    // TODO Pass request?
+  } else if (action.type === ActionType.SetIssuesLoading) {
+    return {
+      apiStatus: {
+        state: ApiState.Loading,
+      },
+      cache: state.cache,
+    };
   } else {
-    return state;
+    // TODO WTF? just return state
+    return { ...defaultState, ...state };
   }
 };
