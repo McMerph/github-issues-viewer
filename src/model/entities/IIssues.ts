@@ -1,13 +1,13 @@
 import ApiState from "./ApiState";
-import ICachedPage from "./ICachedPage";
+import ICachedIssuesPage from "./ICachedIssuesPage";
 import IIssue from "./IIssue";
 import IIssuesSettings from "./IIssuesSettings";
 
 export default interface IIssues {
   apiState: ApiState;
-  cache: ICachedPage[];
+  cache: ICachedIssuesPage[];
   apiError?: string;
-  lastPage?: number;
-  page?: IIssue[];
   settings?: IIssuesSettings;
+  page?: IIssue[];
+  lastPage?: number;
 }

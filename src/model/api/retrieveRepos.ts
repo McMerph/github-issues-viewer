@@ -1,11 +1,13 @@
-import ApiState from "../entities/ApiState";
 import IRepo from "../entities/IRepo";
-import IReposPage from "../entities/IReposPage";
+import IReposSettings from "../entities/IReposSettings";
 import URIS from "./uris";
+import NotModifiedError from "./NotModifiedError";
 
-interface IReposPageResponse {
-  page: IReposPage;
-  linkHeader?: any;
+interface IRetrieveReposResponse {
+  settings: IReposSettings;
+  page: IRepo[];
+  link?: any;
+  eTag: string;
 }
 
 interface IRepoJson {
@@ -22,47 +24,46 @@ function isRepoJson(repo: any): repo is IRepoJson {
     typeof repo.open_issues_count === "number";
 }
 
-export default function retrieveRepos(login: string, page: number): Promise<IReposPageResponse> {
-  let eTagHeader: string | undefined;
-  let linkHeader: string | undefined;
+function retrieveRepos(parameters: IReposSettings, requestETag?: string): Promise<IRetrieveReposResponse> {
+  const { login, pageNumber, perPage } = parameters;
+  let eTag: string;
+  let link: string | undefined;
 
-  // TODO per_page=100 after tests
-  return fetch(`${URIS.ROOT}/${URIS.USERS}/${login}/${URIS.REPOS}?page=${page}&per_page=10`, {
-    headers: {
-      Accept: "application/vnd.github.v3+json",
-    },
+  let requestHeaders: {} = {
+    Accept: "application/vnd.github.v3+json",
+  };
+  if (requestETag) {
+    requestHeaders = { ...requestHeaders, "If-None-Match": requestETag };
+  }
+  return fetch(`${URIS.ROOT}/${URIS.USERS}/${login}/${URIS.REPOS}?page=${pageNumber}&per_page=${perPage}`, {
+    headers: requestHeaders,
     method: "get",
   })
     .then((response) => {
       if (response.ok) {
-        eTagHeader = response.headers.get("etag") || undefined;
-        linkHeader = response.headers.get("link") || undefined;
+        eTag = response.headers.get("etag") || "";
+        link = response.headers.get("link") || undefined;
 
         return response.json();
+      } else if (response.status === 304) {
+        throw new NotModifiedError();
       } else {
         throw new Error("Network response was not ok");
       }
     })
     .then((json) => {
       if (isReposArrayJson(json)) {
-        const repos: IRepo[] = json.map((repo) => ({
+        const page: IRepo[] = json.map((repo) => ({
           issues: repo.open_issues_count,
           name: repo.name,
         }));
-        return {
-          linkHeader,
-          page: {
-            apiState: ApiState.Success,
-            eTag: eTagHeader,
-            repos,
-          },
-        };
+        const settings: IReposSettings = { login, perPage, pageNumber };
+        return { eTag, link, page, settings };
       } else {
         throw new Error("Invalid format");
       }
-    })
-    .catch((error) => {
-      console.error("There has been a problem with your fetch operation: " + error.message);
-      return { page: { apiState: ApiState.Error } };
     });
 }
+
+export default retrieveRepos;
+export { IRetrieveReposResponse };

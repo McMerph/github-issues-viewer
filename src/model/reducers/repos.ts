@@ -1,12 +1,35 @@
 import IAction from "../actions/IAction";
 import { isSetReposAction } from "../actions/ISetReposAction";
-import IReposPage from "../entities/IReposPage";
+import ApiState from "../entities/ApiState";
+import ICachedReposPage from "../entities/ICachedReposPage";
+import IRepos from "../entities/IRepos";
+import { equalsReposSettings } from "../utils";
 
-export const repos = (state: IReposPage[] = [], action: IAction): IReposPage[] => {
+const defaultState: IRepos = {
+  apiState: ApiState.Idle,
+  cache: [],
+  repos: [],
+};
+
+export const repos = (state: IRepos = defaultState, action: IAction): IRepos => {
   if (isSetReposAction(action)) {
-    const newState = [...state];
-    newState[action.page - 1] = action.repos;
-    return newState;
+    const { eTag, page, settings } = action;
+    const cache: ICachedReposPage[] = [
+      ...state.cache.filter((cachedPage) =>
+        !equalsReposSettings(JSON.parse(cachedPage.settings), settings)),
+      {
+        eTag,
+        page,
+        settings: JSON.stringify(settings),
+      },
+    ];
+
+    return {
+      apiState: state.apiState,
+      cache,
+      repos: [...state.repos, ...action.page],
+      settings,
+    };
   } else {
     return state;
   }

@@ -2,16 +2,17 @@ import * as React from "react";
 import ApiState from "../../../model/entities/ApiState";
 import IIssues from "../../../model/entities/IIssues";
 import IIssuesSettings from "../../../model/entities/IIssuesSettings";
-import IReposPage from "../../../model/entities/IReposPage";
+import IRepos from "../../../model/entities/IRepos";
 import IUser from "../../../model/entities/IUser";
 import ReposInfo from "../presentational/repos-info";
 import UserInfo from "../presentational/user-info";
 import Issues from "./Issues";
+import AutoCompleteTest from "../presentational/auto-complete-test";
 
 export interface IStateFromProps {
   issues: IIssues;
   user: IUser;
-  repos: IReposPage[];
+  repos: IRepos;
 }
 
 // TODO DRY It is part of action creator interface
@@ -29,6 +30,10 @@ interface IAppProps extends IStateFromProps, IDispatchFromProps {
 
 const App: React.SFC<IAppProps> = (props) => (
   <React.Fragment>
+    <AutoCompleteTest
+      items={["foo", "bar", "baz"]}
+    />
+
     <UserInfo
       user={props.user}
       onRetrieveUser={props.actions.onRetrieveUser}

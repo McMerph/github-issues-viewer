@@ -3,7 +3,9 @@ import ActionType from "./ActionType";
 import IAction from "./IAction";
 import IIssue, { isIssue } from "../entities/IIssue";
 
+// TODO Rename to ISetIssuesAction?
 interface IAddIssuesAction extends IAction {
+  // TODO Get rid of payload wrapper?
   payload: IAddIssuesActionPayload;
 }
 
