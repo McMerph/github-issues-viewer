@@ -4,10 +4,10 @@ import ApiState from "../../../../model/entities/ApiState";
 import IIssue from "../../../../model/entities/IIssue";
 import IIssues from "../../../../model/entities/IIssues";
 import IIssuesSettings from "../../../../model/entities/IIssuesSettings";
-import Navigation from "../navigation";
 import Spinner from "../spinner";
-import { Fieldset, Head, HeadTitle, Input, Label, Legend, RetrieveButton, Ul, } from "./styled";
+import { Ul, } from "./styled";
 import Issue from "../issue";
+import IssuesPageRequest from "../issues-page-request";
 
 interface IProps {
   issues: IIssues;
@@ -48,53 +48,22 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
 
     return (
       <React.Fragment>
-        <Head>
-          <form onSubmit={this.onSubmit}>
-            <Fieldset>
-              <Legend>Choose repository</Legend>
-              <Label>
-                Login
-                <Input
-                  type="text"
-                  placeholder="e.g. reactjs"
-                  value={this.state.login}
-                  onChange={this.onChangeLogin}
-                />
-              </Label>
-              <Label>
-                Repo
-                <Input
-                  type="text"
-                  placeholder="e.g. reactjs.org"
-                  value={this.state.repo}
-                  onChange={this.onChangeRepo}
-                />
-              </Label>
-              <Label>
-                Per page
-                <Input
-                  type="number"
-                  value={this.state.perPage}
-                  onChange={this.onChangePerPage}
-                />
-              </Label>
-              <RetrieveButton
-                type="submit"
-                disabled={issues.apiState === ApiState.Loading}
-              >
-                Retrieve
-              </RetrieveButton>
-            </Fieldset>
-          </form>
-          {login && repo && <HeadTitle>{login} / {repo}</HeadTitle>}
-          <Navigation
-            issues={issues}
-            hasPrevious={this.hasPrevious}
-            hasNext={this.hasNext}
-            onPrevious={this.onPrevious}
-            onNext={this.onNext}
-          />
-        </Head>
+        <IssuesPageRequest
+          displayedLogin={login}
+          displayedRepo={repo}
+          issues={issues}
+          login={this.state.login}
+          perPage={this.state.perPage}
+          repo={this.state.repo}
+          hasNext={this.hasNext}
+          hasPrevious={this.hasPrevious}
+          onChangeLogin={this.onChangeLogin}
+          onChangePerPage={this.onChangePerPage}
+          onChangeRepo={this.onChangeRepo}
+          onNext={this.onNext}
+          onPrevious={this.onPrevious}
+          onSubmit={this.onSubmit}
+        />
         {issues.apiState === ApiState.Loading ? <Spinner/> : (<Ul>
           {page && page.length > 0 && page.map((issue, issueIndex) =>
             <Issue

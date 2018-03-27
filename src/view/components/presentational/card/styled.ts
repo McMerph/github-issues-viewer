@@ -1,9 +1,9 @@
-import styled from "styled-components";
+import { css } from "styled-components";
 
-const Card = styled.div`
+const cardCss = css`
   box-sizing: border-box;
   width: 98%;
   max-width: 640px;
 `;
 
-export default Card;
+export { cardCss };

@@ -1,8 +1,9 @@
 import styled from "styled-components";
-import Card from "../card/styled";
+import { cardCss } from "../card/styled";
 import { COLORS, FONTS_STACK } from "../constants";
 
-const Wrapper = Card.extend`
+const Wrapper = styled.li`
+  ${cardCss};
   box-shadow:
     0 1px 5px 0 rgba(0, 0, 0, 0.2),
     0 2px 2px 0 rgba(0, 0, 0, 0.14),
@@ -11,7 +12,7 @@ const Wrapper = Card.extend`
   margin: 10px auto;
   background: ${COLORS.COLOR3};
   list-style: none;
-`.withComponent("li");
+`;
 
 const Header = styled.div`
   display: flex;
