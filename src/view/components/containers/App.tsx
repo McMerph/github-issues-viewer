@@ -4,9 +4,9 @@ import IIssues from "../../../model/entities/IIssues";
 import IIssuesSettings from "../../../model/entities/IIssuesSettings";
 import IReposPage from "../../../model/entities/IReposPage";
 import IUser from "../../../model/entities/IUser";
-import IssuesInfo from "../presentational/issues-info";
 import ReposInfo from "../presentational/repos-info";
 import UserInfo from "../presentational/user-info";
+import Issues from "./Issues";
 
 export interface IStateFromProps {
   issues: IIssues;
@@ -37,7 +37,7 @@ const App: React.SFC<IAppProps> = (props) => (
       repos={props.repos}
       onRetrieveRepos={props.actions.onRetrieveRepos}
     />
-    <IssuesInfo
+    <Issues
       issues={props.issues}
       onRetrieveIssues={props.actions.onRetrieveIssues}
       onSetIssuesApiState={props.actions.onSetIssuesApiState}

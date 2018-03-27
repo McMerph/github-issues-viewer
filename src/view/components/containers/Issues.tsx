@@ -1,13 +1,11 @@
 import * as React from "react";
 import { FormEvent } from "react";
-import ApiState from "../../../../model/entities/ApiState";
-import IIssue from "../../../../model/entities/IIssue";
-import IIssues from "../../../../model/entities/IIssues";
-import IIssuesSettings from "../../../../model/entities/IIssuesSettings";
-import Spinner from "../spinner";
-import { Ul, } from "./styled";
-import Issue from "../issue";
-import IssuesPageRequest from "../issues-page-request";
+import ApiState from "../../../model/entities/ApiState";
+import IIssue from "../../../model/entities/IIssue";
+import IIssues from "../../../model/entities/IIssues";
+import IIssuesSettings from "../../../model/entities/IIssuesSettings";
+import IssuesPageRequest from "../presentational/issues-page-request/index";
+import IssuesPageResponse from "../presentational/issues-page-response/index";
 
 interface IProps {
   issues: IIssues;
@@ -21,7 +19,7 @@ interface IState {
   repo: string;
 }
 
-export default class IssuesInfo extends React.PureComponent<IProps, IState> {
+export default class Issues extends React.PureComponent<IProps, IState> {
 
   public constructor(props: Readonly<IProps>) {
     super(props);
@@ -64,13 +62,10 @@ export default class IssuesInfo extends React.PureComponent<IProps, IState> {
           onPrevious={this.onPrevious}
           onSubmit={this.onSubmit}
         />
-        {issues.apiState === ApiState.Loading ? <Spinner/> : (<Ul>
-          {page && page.length > 0 && page.map((issue, issueIndex) =>
-            <Issue
-              issue={issue}
-              key={issueIndex}
-            />)}
-        </Ul>)}
+        <IssuesPageResponse
+          page={page}
+          issues={issues}
+        />
       </React.Fragment>
     );
   }

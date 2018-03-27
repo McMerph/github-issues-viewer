@@ -22,6 +22,7 @@ interface IProps {
   onSubmit(event: FormEvent<HTMLFormElement>): void;
 }
 
+// TODO Introduce state with login, repo, perPage?
 const IssuesPageRequest: React.SFC<IProps> = (props) => {
   const {
     displayedLogin,
