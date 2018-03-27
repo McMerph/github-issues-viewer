@@ -6,6 +6,7 @@ interface IProps {
   issue: IIssue;
 }
 
+// TODO Check dateTime zone
 const Issue: React.SFC<IProps> = (props) => {
   const { issue } = props;
   const { number: indexNumber, creationDate, title } = issue;

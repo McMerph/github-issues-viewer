@@ -1,9 +1,9 @@
 import * as React from "react";
-import { FormEvent } from "react";
 import ApiState from "../../../model/entities/ApiState";
 import IIssue from "../../../model/entities/IIssue";
 import IIssues from "../../../model/entities/IIssues";
 import IIssuesSettings from "../../../model/entities/IIssuesSettings";
+import { IIssuesPageRequestState } from "../presentational/issues-page-request";
 import IssuesPageRequest from "../presentational/issues-page-request/index";
 import IssuesPageResponse from "../presentational/issues-page-response/index";
 
@@ -13,24 +13,11 @@ interface IProps {
   onSetIssuesApiState(state: ApiState): void;
 }
 
-interface IState {
-  login: string;
-  perPage: number;
-  repo: string;
-}
-
-export default class Issues extends React.PureComponent<IProps, IState> {
+// TODO Make React.SFC?
+export default class Issues extends React.PureComponent<IProps, {}> {
 
   public constructor(props: Readonly<IProps>) {
     super(props);
-    this.state = {
-      login: "reactjs",
-      perPage: 100,
-      repo: "reactjs.org",
-    };
-    this.onChangeLogin = this.onChangeLogin.bind(this);
-    this.onChangeRepo = this.onChangeRepo.bind(this);
-    this.onChangePerPage = this.onChangePerPage.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onPrevious = this.onPrevious.bind(this);
     this.onNext = this.onNext.bind(this);
@@ -50,14 +37,8 @@ export default class Issues extends React.PureComponent<IProps, IState> {
           displayedLogin={login}
           displayedRepo={repo}
           issues={issues}
-          login={this.state.login}
-          perPage={this.state.perPage}
-          repo={this.state.repo}
           hasNext={this.hasNext}
           hasPrevious={this.hasPrevious}
-          onChangeLogin={this.onChangeLogin}
-          onChangePerPage={this.onChangePerPage}
-          onChangeRepo={this.onChangeRepo}
           onNext={this.onNext}
           onPrevious={this.onPrevious}
           onSubmit={this.onSubmit}
@@ -68,25 +49,6 @@ export default class Issues extends React.PureComponent<IProps, IState> {
         />
       </React.Fragment>
     );
-  }
-
-  private onSubmit(event: FormEvent<HTMLFormElement>): void {
-    event.preventDefault();
-    if (this.props.issues.apiState !== ApiState.Loading &&
-      this.state.login.length > 0 &&
-      this.state.repo.length > 0) {
-      this.retrieve(1);
-    }
-  }
-
-  private retrieve(pageNumber: number): void {
-    this.props.onSetIssuesApiState(ApiState.Loading);
-    this.props.onRetrieveIssues({
-      login: this.state.login,
-      pageNumber,
-      perPage: this.state.perPage,
-      repo: this.state.repo,
-    });
   }
 
   private hasPrevious(): boolean {
@@ -108,32 +70,34 @@ export default class Issues extends React.PureComponent<IProps, IState> {
     }
   }
 
-  private onPrevious(): void {
+  private onSubmit(parameters: IIssuesPageRequestState): void {
+    if (this.props.issues.apiState !== ApiState.Loading &&
+      parameters.login.length > 0 &&
+      parameters.repo.length > 0) {
+      this.retrieve(parameters, 1);
+    }
+  }
+
+  private onPrevious(parameters: IIssuesPageRequestState): void {
     if (this.props.issues.settings && this.hasPrevious()) {
-      this.retrieve(this.props.issues.settings.pageNumber - 1);
+      this.retrieve(parameters, this.props.issues.settings.pageNumber - 1);
     }
   }
 
-  private onNext(): void {
+  private onNext(parameters: IIssuesPageRequestState): void {
     if (this.props.issues.settings && this.hasNext()) {
-      this.retrieve(this.props.issues.settings.pageNumber + 1);
+      this.retrieve(parameters, this.props.issues.settings.pageNumber + 1);
     }
   }
 
-  private onChangeLogin(event: FormEvent<HTMLInputElement>): void {
-    this.setState({ login: event.currentTarget.value });
-  }
-
-  private onChangeRepo(event: FormEvent<HTMLInputElement>): void {
-    this.setState({ repo: event.currentTarget.value });
-  }
-
-  private onChangePerPage(event: FormEvent<HTMLInputElement>): void {
-    let perPage: number = parseInt(event.currentTarget.value, 10);
-    if (isNaN(perPage) || perPage < 1) {
-      perPage = 1;
-    }
-    this.setState({ perPage });
+  private retrieve(parameters: IIssuesPageRequestState, pageNumber: number): void {
+    this.props.onSetIssuesApiState(ApiState.Loading);
+    this.props.onRetrieveIssues({
+      login: parameters.login,
+      pageNumber,
+      perPage: parameters.perPage,
+      repo: parameters.repo,
+    });
   }
 
 }
