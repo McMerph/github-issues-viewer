@@ -27,8 +27,10 @@ export default class IssuesPageRequest extends React.PureComponent<IProps, IIssu
   public constructor(props: Readonly<IProps>) {
     super(props);
     this.state = {
+      // TODO Make "" after finish
       login: "reactjs",
       perPage: 100,
+      // TODO Make "" after finish
       repo: "reactjs.org",
     };
     this.onChangeLogin = this.onChangeLogin.bind(this);

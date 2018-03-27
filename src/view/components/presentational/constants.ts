@@ -12,4 +12,6 @@ const FONTS_STACK = Object.freeze({
   ROBOTO: "'Roboto', sans-serif",
 });
 
+// TODO Add dictionary
+
 export { COLORS, FONTS_STACK };

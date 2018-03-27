@@ -67,6 +67,11 @@ const actionCreator = {
             parseInt(parsedLink.last.page, 10) :
             issuesResponse.settings.pageNumber;
           const settings: IIssuesSettings = { ...issuesResponse.settings };
+          const setSuccessAction: ISetIssuesApiStateAction = {
+            state: ApiState.Success,
+            type: ActionType.SetIssuesApiState,
+          };
+          dispatch(setSuccessAction);
           const addIssuesAction: IAddIssuesAction = {
             payload: {
               eTag,
@@ -77,15 +82,15 @@ const actionCreator = {
             type: ActionType.AddIssues,
           };
           dispatch(addIssuesAction);
-          const setSuccessAction: ISetIssuesApiStateAction = {
-            state: ApiState.Success,
-            type: ActionType.SetIssuesApiState,
-          };
-          dispatch(setSuccessAction);
         })
         .catch((error) => {
           if (error instanceof NotModifiedError) {
             if (cachedPage && requestETag) {
+              const setSuccessAction: ISetIssuesApiStateAction = {
+                state: ApiState.Success,
+                type: ActionType.SetIssuesApiState,
+              };
+              dispatch(setSuccessAction);
               const addIssuesAction: IAddIssuesAction = {
                 payload: {
                   eTag: requestETag,
@@ -96,14 +101,10 @@ const actionCreator = {
                 type: ActionType.AddIssues,
               };
               dispatch(addIssuesAction);
-              const setSuccessAction: ISetIssuesApiStateAction = {
-                state: ApiState.Success,
-                type: ActionType.SetIssuesApiState,
-              };
-              dispatch(setSuccessAction);
             }
           } else {
             const setErrorAction: ISetIssuesApiStateAction = {
+              error: "There has been a problem with your fetch operation: " + error.message,
               state: ApiState.Error,
               type: ActionType.SetIssuesApiState,
             };

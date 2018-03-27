@@ -6,6 +6,7 @@ import IIssuesSettings from "./IIssuesSettings";
 export default interface IIssues {
   apiState: ApiState;
   cache: ICachedPage[];
+  apiError?: string;
   lastPage?: number;
   page?: IIssue[];
   settings?: IIssuesSettings;

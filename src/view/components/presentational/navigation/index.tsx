@@ -20,7 +20,7 @@ const Navigation: React.SFC<IProps> = (props) => {
   const loading: boolean = issues.apiState === ApiState.Loading;
   const pageNumber: number | undefined = issues.settings && issues.settings.pageNumber;
 
-  if (hasPrevious || hasNext) {
+  if (issues.apiState === ApiState.Success && (hasPrevious || hasNext)) {
     return (
       <Wrapper>
         <BackButton

@@ -27,8 +27,9 @@ export default class Issues extends React.PureComponent<IProps, {}> {
 
   public render(): React.ReactNode {
     const issues: IIssues = this.props.issues;
-    const login: string | undefined = issues.settings ? issues.settings.login : undefined;
-    const repo: string | undefined = issues.settings ? issues.settings.repo : undefined;
+    const success: boolean = issues.apiState === ApiState.Success;
+    const login: string | undefined = success && issues.settings ? issues.settings.login : undefined;
+    const repo: string | undefined = success && issues.settings ? issues.settings.repo : undefined;
     const page: IIssue[] | undefined = issues.page;
 
     return (

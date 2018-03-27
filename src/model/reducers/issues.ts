@@ -33,7 +33,7 @@ export const issues = (state: IIssues = defaultState, action: IAction): IIssues 
       settings,
     };
   } else if (isSetIssuesApiStateAction(action)) {
-    return { ...state, apiState: action.state };
+    return { cache: state.cache, apiState: action.state, apiError: action.error };
   } else {
     return state;
   }

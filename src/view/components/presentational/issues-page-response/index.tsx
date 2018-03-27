@@ -4,7 +4,9 @@ import IIssue from "../../../../model/entities/IIssue";
 import IIssues from "../../../../model/entities/IIssues";
 import Issue from "../issue";
 import Spinner from "../spinner";
-import { Ul } from "./styled";
+import { Error, Img, Ul } from "./styled";
+
+const warning = require("../../../resources/icons/warning.svg");
 
 interface IProps {
   issues: IIssues;
@@ -17,8 +19,13 @@ const IssuesPageResponse: React.SFC<IProps> = (props) => {
   if (issues.apiState === ApiState.Loading) {
     return <Spinner/>;
   } else if (issues.apiState === ApiState.Error) {
-    // TODO Display error
-    return null;
+    return (
+      // TODO Change to figure tag?
+      <Error>
+        <Img src={warning} alt="Ошибка"/>
+        {issues.apiError}
+      </Error>
+    );
   } else if (page && page.length > 0) {
     return (
       <Ul>
