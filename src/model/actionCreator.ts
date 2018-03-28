@@ -1,20 +1,28 @@
 import { Dispatch } from "redux";
 import ActionType from "./actions/ActionType";
-import ISetIssuesErrorAction from "./actions/ISetIssuesErrorAction";
-import ISetReposAction from "./actions/ISetReposAction";
 import IUpdateIssuesAction from "./actions/IUpdateIssuesAction";
+import IUpdateReposAction from "./actions/IUpdateReposAction";
 import NotModifiedError from "./api/NotModifiedError";
 import retrieveIssues from "./api/retrieveIssues";
 import retrieveRepos from "./api/retrieveRepos";
 import retrieveUser from "./api/retrieveUser";
-import ApiState from "./entities/ApiState";
+import equalsIssuesRequests from "./entities/issues/equalsIssuesRequests";
 import IIssuesCacheEntry from "./entities/issues/IIssuesCacheEntry";
 import IIssuesRequest from "./entities/issues/IIssuesRequest";
 import IIssuesResponse from "./entities/issues/IIssuesResponse";
+import equalsReposRequests from "./entities/repos/equalsReposRequests";
+import IRepo from "./entities/repos/IRepo";
 import IReposCacheEntry from "./entities/repos/IReposCacheEntry";
 import IReposRequest from "./entities/repos/IReposRequest";
 import IStore from "./IStore";
-import { equalsIssuesRequests, equalsReposSettings } from "./utils";
+
+const handleErrorResponse = (dispatch: Dispatch<IStore>, error: Error, type: ActionType): void => {
+  dispatch({
+    error: `There has been a problem with your fetch operation: ${error.message}`,
+    type,
+  });
+  console.error(`There has been a problem with your fetch operation: ${error.message}`);
+};
 
 const actionCreator = {
   retrieveUser: (login: string) => {
@@ -32,35 +40,36 @@ const actionCreator = {
   retrieveRepos: (login: string) => {
     let pageNumber: number = 1;
     return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
-      const retrieveNextPage = (): void => {
-        pageNumber++;
-        retrievePage();
-      };
       const retrievePage = (): void => {
-        // TODO Set per_page to 100 after tests
-        const request: IReposRequest = { login, pageNumber, perPage: 10 };
+        // TODO Set per_page to 100 after tests in constants
+        const request: IReposRequest = { login, pageNumber, perPage: 20 };
         const cacheEntry: IReposCacheEntry | undefined = getState().repos.cache
-          .find((entry) => equalsReposSettings(entry.request, request));
+          .find((entry) => equalsReposRequests(entry.request, request));
         const requestETag: string | undefined = cacheEntry && cacheEntry.eTag;
 
-        retrieveRepos(request, requestETag)
-          .then((response) => {
-            const { page, eTag } = response;
-            const setReposAction: ISetReposAction = {
-              eTag, response: page, request,
-              type: ActionType.SetRepos,
-            };
-            dispatch(setReposAction);
+        const handleSuccessResponse = (eTag: string, hasNext: boolean, response: IRepo[]): void => {
+          const updateReposAction: IUpdateReposAction = {
+            eTag, hasNext, request, response, type: ActionType.UpdateRepos,
+          };
+          dispatch(updateReposAction);
+          if (hasNext) {
+            pageNumber++;
+            retrievePage();
+          }
+        };
 
-            if (response.hasNext) {
-              retrieveNextPage();
-            }
-          })
+        retrieveRepos(request, requestETag)
+          .then((apiResponse) =>
+            handleSuccessResponse(apiResponse.eTag, apiResponse.hasNext, apiResponse.page))
           .catch((error) => {
-            // TODO handle error
-            console.error(error);
+            if (error instanceof NotModifiedError && cacheEntry && requestETag) {
+              handleSuccessResponse(requestETag, cacheEntry.hasNext, cacheEntry.response);
+            } else {
+              handleErrorResponse(dispatch, error, ActionType.SetReposError);
+            }
           });
       };
+      dispatch({ type: ActionType.SetReposLoading });
       retrievePage();
     };
   },
@@ -68,22 +77,21 @@ const actionCreator = {
     return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
       dispatch({ type: ActionType.SetIssuesLoading });
 
+      const cacheEntry: IIssuesCacheEntry | undefined = getState().issues.cache
+        .find((entry) => equalsIssuesRequests(entry.request, request));
+      const requestETag: string | undefined = cacheEntry && cacheEntry.eTag;
+
       const handleSuccessResponse = (response: IIssuesResponse, eTag: string): void => {
         const updateIssuesAction: IUpdateIssuesAction = {
-          apiStatus: { state: ApiState.Success },
           eTag, request, response,
           type: ActionType.UpdateIssues,
         };
         dispatch(updateIssuesAction);
       };
 
-      const cacheEntry: IIssuesCacheEntry | undefined = getState().issues.cache
-        .find((entry) => equalsIssuesRequests(entry.request, request));
-      const requestETag: string | undefined = cacheEntry && cacheEntry.eTag;
-
       retrieveIssues(request, requestETag)
-        .then((response) => {
-          const { lastPageNumber, page, eTag } = response;
+        .then((apiResponse) => {
+          const { lastPageNumber, page, eTag } = apiResponse;
           handleSuccessResponse({ lastPageNumber, page }, eTag);
         })
         .catch((error) => {
@@ -91,17 +99,11 @@ const actionCreator = {
             const { lastPageNumber, page } = cacheEntry.response;
             handleSuccessResponse({ lastPageNumber, page }, requestETag);
           } else {
-            const setErrorAction: ISetIssuesErrorAction = {
-              error: `There has been a problem with your fetch operation: ${error.message}`,
-              type: ActionType.SetIssuesError,
-            };
-            dispatch(setErrorAction);
-            console.error(`There has been a problem with your fetch operation: ${error.message}`);
+            handleErrorResponse(dispatch, error, ActionType.SetIssuesError);
           }
         });
     };
   },
-  setIssuesLoading: () => ({ type: ActionType.SetIssuesLoading }),
 };
 
 export default actionCreator;

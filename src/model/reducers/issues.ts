@@ -1,39 +1,31 @@
 import ActionType from "../actions/ActionType";
 import IAction from "../actions/IAction";
-import { isSetIssuesErrorAction } from "../actions/ISetIssuesErrorAction";
+import { isSetErrorAction } from "../actions/ISetErrorAction";
 import { isUpdateIssuesAction } from "../actions/IUpdateIssuesAction";
 import ApiState from "../entities/ApiState";
+import equalsIssuesRequests from "../entities/issues/equalsIssuesRequests";
 import IIssues from "../entities/issues/IIssues";
 import IIssuesCacheEntry from "../entities/issues/IIssuesCacheEntry";
-import { equalsIssuesRequests } from "../utils";
 
 const defaultState: IIssues = {
-  apiStatus: {
-    state: ApiState.Idle,
-  },
+  apiStatus: { state: ApiState.Idle },
   cache: [],
 };
 
 export const issues = (state: IIssues = defaultState, action: IAction): IIssues => {
   if (isUpdateIssuesAction(action)) {
-    const { apiStatus, eTag, request, response } = action;
+    const { eTag, request, response } = action;
     const cache: IIssuesCacheEntry[] = [
-      ...state.cache.filter((cachedEntry) =>
-        !equalsIssuesRequests(cachedEntry.request, request)),
-      {
-        eTag,
-        request,
-        response,
-      },
+      ...state.cache.filter((cacheEntry) =>
+        !equalsIssuesRequests(cacheEntry.request, request)),
+      { eTag, request, response },
     ];
 
     return {
-      apiStatus,
-      cache,
-      request,
-      response,
+      apiStatus: { state: ApiState.Success },
+      cache, request, response,
     };
-  } else if (isSetIssuesErrorAction(action)) {
+  } else if (action.type === ActionType.SetIssuesError && isSetErrorAction(action)) {
     return {
       apiStatus: {
         error: action.error,
@@ -41,13 +33,9 @@ export const issues = (state: IIssues = defaultState, action: IAction): IIssues 
       },
       cache: state.cache,
     };
-
-    // TODO Pass request?
   } else if (action.type === ActionType.SetIssuesLoading) {
     return {
-      apiStatus: {
-        state: ApiState.Loading,
-      },
+      apiStatus: { state: ApiState.Loading },
       cache: state.cache,
     };
   } else {

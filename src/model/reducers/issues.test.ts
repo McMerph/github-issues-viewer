@@ -2,15 +2,13 @@ import ActionType from "../actions/ActionType";
 import IAction from "../actions/IAction";
 import IUpdateIssuesAction from "../actions/IUpdateIssuesAction";
 import ApiState from "../entities/ApiState";
-import IApiStatus from "../entities/IApiStatus";
 import IIssue from "../entities/issues/IIssue";
 import IIssues from "../entities/issues/IIssues";
-import IIssuesCacheEntry from "../entities/issues/IIssuesCacheEntry";
 import IIssuesRequest from "../entities/issues/IIssuesRequest";
-import IIssuesResponse from "../entities/issues/IIssuesResponse";
 import { issues } from "./issues";
+import ISetErrorAction from "../actions/ISetErrorAction";
 
-describe("issues() is a issues reducer", () => {
+describe("issues() is a reducer for issues of current repository", () => {
   test("issues() instantiates with correct initial state", () => {
     // Given
     const action: IAction = { type: ActionType.UpdateIssues };
@@ -28,7 +26,46 @@ describe("issues() is a issues reducer", () => {
     expect(state).toEqual(expectedState);
   });
 
-  test("issues() correctly handle addIssuesAction", () => {
+  test("issues() correctly handle loading action", () => {
+    // Given
+    const action: IAction = { type: ActionType.SetIssuesLoading };
+    const expectedState: IIssues = {
+      apiStatus: {
+        state: ApiState.Loading,
+      },
+      cache: [],
+    };
+
+    // When
+    const state: IIssues = issues(undefined, action);
+
+    // Then
+    expect(state).toEqual(expectedState);
+  });
+
+  test("issues() correctly handle error action", () => {
+    // Given
+    const error: string = "It's not an error. It's test.";
+    const errorAction: ISetErrorAction = {
+      error,
+      type: ActionType.SetIssuesError,
+    };
+    const expectedState: IIssues = {
+      apiStatus: {
+        error,
+        state: ApiState.Error,
+      },
+      cache: [],
+    };
+
+    // When
+    const state: IIssues = issues(undefined, errorAction);
+
+    // Then
+    expect(state).toEqual(expectedState);
+  });
+
+  test("issues() correctly handle update action", () => {
     // Given
     const request: IIssuesRequest = {
       login: "login",
@@ -43,40 +80,32 @@ describe("issues() is a issues reducer", () => {
         title: "title1",
       },
     ];
-    const lastPage = 3;
+    const lastPageNumber = 3;
     const eTag: string = "eTag";
     const updateIssuesAction: IUpdateIssuesAction = {
-      apiStatus: {
-        state: ApiState.Success,
-      },
       eTag,
       request,
       response: {
-        lastPageNumber: lastPage,
+        lastPageNumber,
         page,
       },
       type: ActionType.UpdateIssues,
     };
-    const response: IIssuesResponse = {
-      lastPageNumber: lastPage,
-      page,
-    };
-    const cache: IIssuesCacheEntry[] = [{
-      eTag,
+    const expectedState: IIssues = {
+      apiStatus: { state: ApiState.Success },
+      cache: [{
+        eTag,
+        request,
+        response: {
+          lastPageNumber,
+          page,
+        },
+      }],
       request,
       response: {
-        lastPageNumber: lastPage,
+        lastPageNumber,
         page,
       },
-    }];
-    const apiStatus: IApiStatus = {
-      state: ApiState.Success,
-    };
-    const expectedState: IIssues = {
-      apiStatus,
-      cache,
-      request,
-      response,
     };
 
     // When

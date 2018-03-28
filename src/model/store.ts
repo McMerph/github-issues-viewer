@@ -6,6 +6,7 @@ import IStore from "./IStore";
 import { loadState, saveState } from "./localStorage";
 import combinedReducer from "./reducers";
 
+// TODO Spread persisted state with default states of reducers?
 const persistedState = loadState() || {};
 const store = createStore<IStore>(
   combinedReducer,

@@ -3,13 +3,16 @@ import ApiState from "../../../model/entities/ApiState";
 import IIssue from "../../../model/entities/issues/IIssue";
 import IIssues from "../../../model/entities/issues/IIssues";
 import IIssuesRequest from "../../../model/entities/issues/IIssuesRequest";
+import IRepos from "../../../model/entities/repos/IRepos";
 import { IIssuesRequestState } from "../presentational/issues-request";
 import IssuesRequest from "../presentational/issues-request/index";
 import IssuesResponse from "../presentational/issues-response/index";
 
 interface IProps {
   issues: IIssues;
+  repos: IRepos;
   onRetrieveIssues(request: IIssuesRequest): void;
+  onRetrieveRepos(login: string): void;
 }
 
 // TODO Make React.SFC?
@@ -34,11 +37,13 @@ export default class Issues extends React.PureComponent<IProps, {}> {
           displayedLogin={issues.request && issues.request.login}
           displayedRepo={issues.request && issues.request.repo}
           issues={issues}
+          repos={this.props.repos}
           hasNext={this.hasNext}
           hasPrevious={this.hasPrevious}
           onNext={this.onNext}
           onPrevious={this.onPrevious}
           onSubmit={this.onSubmit}
+          onRetrieveRepos={this.props.onRetrieveRepos}
         />
         <IssuesResponse
           page={page}

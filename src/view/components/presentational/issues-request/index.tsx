@@ -1,19 +1,35 @@
 import * as React from "react";
 import { FormEvent } from "react";
+import * as Autocomplete from "react-autocomplete";
 import ApiState from "../../../../model/entities/ApiState";
 import IIssues from "../../../../model/entities/issues/IIssues";
+import IRepo from "../../../../model/entities/repos/IRepo";
+import IRepos from "../../../../model/entities/repos/IRepos";
 import Navigation from "../navigation";
-import { Fieldset, Input, Label, Legend, RetrieveButton, Title, Wrapper } from "./styled";
+import {
+  Fieldset,
+  Input,
+  Label,
+  LabelWithAutoComplete,
+  Legend,
+  MenuItem,
+  MenuItemAppendix,
+  RetrieveButton,
+  Title,
+  Wrapper
+} from "./styled";
 
 interface IProps {
   displayedLogin: string | undefined;
   displayedRepo: string | undefined;
   issues: IIssues;
+  repos: IRepos;
   hasNext(): boolean;
   hasPrevious(): boolean;
   onNext(parameters: IIssuesRequestState): void;
   onPrevious(parameters: IIssuesRequestState): void;
   onSubmit(parameters: IIssuesRequestState): void;
+  onRetrieveRepos(login: string): void;
 }
 
 interface IIssuesRequestState {
@@ -30,8 +46,7 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
       // TODO Make "" after finish
       login: "reactjs",
       perPage: 100,
-      // TODO Make "" after finish
-      repo: "reactjs.org",
+      repo: "",
     };
     this.onChangeLogin = this.onChangeLogin.bind(this);
     this.onChangeRepo = this.onChangeRepo.bind(this);
@@ -39,6 +54,9 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
     this.onSubmit = this.onSubmit.bind(this);
     this.onPrevious = this.onPrevious.bind(this);
     this.onNext = this.onNext.bind(this);
+    this.onSelect = this.onSelect.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+    this.sameLoginAndRepo = this.sameLoginAndRepo.bind(this);
   }
 
   public render(): React.ReactNode {
@@ -58,21 +76,26 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
           <Label>
             Login
             <Input
+              onBlur={this.onBlur}
               type="text"
               placeholder="e.g. reactjs"
               value={login}
               onChange={this.onChangeLogin}
             />
           </Label>
-          <Label>
+          <LabelWithAutoComplete>
             Repo
-            <Input
-              type="text"
-              placeholder="e.g. reactjs.org"
+            <Autocomplete
+              items={this.props.repos.list || []}
+              shouldItemRender={this.shouldRepoRender}
+              getItemValue={this.getRepoName}
+              renderItem={this.renderRepo}
               value={repo}
               onChange={this.onChangeRepo}
+              onSelect={this.onSelect}
+              wrapperStyle={{}}
             />
-          </Label>
+          </LabelWithAutoComplete>
           <Label>
             Per page
             <Input
@@ -98,6 +121,50 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
         />
       </Wrapper>
     );
+  }
+
+  private shouldRepoRender(repo: IRepo, value: string): boolean {
+    return repo.name.toLowerCase().indexOf(value.toLowerCase()) > -1;
+  }
+
+  private getRepoName(repo: IRepo): string {
+    return repo.name;
+  }
+
+  private renderRepo(repo: IRepo, highlighted: boolean): React.ReactNode {
+    return (
+      <MenuItem
+        key={repo.name}
+        theme={{ highlighted }}
+      >
+        {repo.name}
+        <MenuItemAppendix>{repo.issues}</MenuItemAppendix>
+      </MenuItem>
+    );
+  }
+
+  private onSelect(value: string): void {
+    this.setState({ repo: value }, () => {
+      if (!this.sameLoginAndRepo() && this.props.issues.apiStatus.state !== ApiState.Loading) {
+        this.props.onSubmit(this.state);
+      }
+    });
+  }
+
+  private onBlur(): void {
+    const sameLogin: boolean = this.props.repos.login === this.state.login;
+    if (!sameLogin && this.props.repos.apiStatus.state !== ApiState.Loading) {
+      this.props.onRetrieveRepos(this.state.login);
+    }
+  }
+
+  private sameLoginAndRepo(): boolean {
+    const sameLogin: boolean =
+      (this.props.issues.request && this.props.issues.request.login === this.state.login) || false;
+    const sameRepo: boolean =
+      (this.props.issues.request && this.props.issues.request.repo === this.state.repo) || false;
+
+    return sameLogin && sameRepo;
   }
 
   private onPrevious(): void {

@@ -1,7 +1,7 @@
-import styled from "styled-components";
 import Button from "../button/styled";
 import { cardCss } from "../card/styled";
 import { COLORS, FONTS_STACK } from "../constants";
+import styled from "./styled-components";
 
 const Wrapper = styled.form`
   ${cardCss};
@@ -33,12 +33,28 @@ const Label = styled.label`
   margin: 16px 0;
 `;
 
+const LabelWithAutoComplete = Label.extend`
+  & > div {
+    margin-left: auto;
+    flex: 0 1 70%;
+  }
+
+  & input {
+    font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
+    color: ${COLORS.COLOR1};
+    padding: 6px 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+`;
+
 const Input = styled.input`
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
   color: ${COLORS.COLOR1};
   padding: 6px 0;
   margin-left: auto;
   flex: 0 1 70%;
+  box-sizing: border-box;
 `;
 
 const RetrieveButton = Button.extend`
@@ -51,4 +67,25 @@ const Title = styled.div`
   margin: 16px 0;
 `;
 
-export { Fieldset, Legend, Label, Input, Wrapper, Title, RetrieveButton };
+const MenuItem = styled.div`
+  padding: 6px 2px;
+  display: flex;
+  background-color: ${(props) => props.theme.highlighted ? "#eee" : "transparent"};
+`;
+
+const MenuItemAppendix = styled.div`
+  margin-left: auto;
+`;
+
+export {
+  Wrapper,
+  Fieldset,
+  Legend,
+  Label,
+  Input,
+  LabelWithAutoComplete,
+  Title,
+  RetrieveButton,
+  MenuItem,
+  MenuItemAppendix,
+};

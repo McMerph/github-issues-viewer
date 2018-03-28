@@ -3,7 +3,6 @@ import IIssues from "../../../model/entities/issues/IIssues";
 import IIssuesRequest from "../../../model/entities/issues/IIssuesRequest";
 import IUser from "../../../model/entities/IUser";
 import IRepos from "../../../model/entities/repos/IRepos";
-import ReposInfo from "../presentational/repos-info";
 import UserInfo from "../presentational/user-info";
 import Issues from "./Issues";
 
@@ -28,13 +27,11 @@ const App: React.SFC<IStateFromProps & IDispatchFromProps> = (props) => (
       user={props.user}
       onRetrieveUser={props.actions.onRetrieveUser}
     />
-    <ReposInfo
-      repos={props.repos}
-      onRetrieveRepos={props.actions.onRetrieveRepos}
-    />
     <Issues
       issues={props.issues}
+      repos={props.repos}
       onRetrieveIssues={props.actions.onRetrieveIssues}
+      onRetrieveRepos={props.actions.onRetrieveRepos}
     />
   </React.Fragment>
 );

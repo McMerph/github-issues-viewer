@@ -5,5 +5,6 @@ import IReposCacheEntry from "./IReposCacheEntry";
 export default interface IRepos {
   apiStatus: IApiStatus;
   cache: IReposCacheEntry[];
-  list: IRepo[];
+  list?: IRepo[];
+  login?: string;
 }
