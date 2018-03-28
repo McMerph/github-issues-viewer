@@ -1,12 +1,9 @@
-import ICachedReposPage from "./ICachedReposPage";
+import IApiStatus from "../IApiStatus";
 import IRepo from "./IRepo";
-import IReposSettings from "./IReposSettings";
-import ApiState from "../ApiState";
+import IReposCacheEntry from "./IReposCacheEntry";
 
 export default interface IRepos {
-  apiState: ApiState;
-  apiError?: string;
-  cache: ICachedReposPage[];
-  repos: IRepo[];
-  settings?: IReposSettings;
+  apiStatus: IApiStatus;
+  cache: IReposCacheEntry[];
+  list: IRepo[];
 }

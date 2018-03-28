@@ -23,6 +23,8 @@ function retrieveIssues(request: IIssuesRequest, requestETag?: string): Promise<
   const { login, repo, pageNumber, perPage } = request;
   let eTag: string;
   let link: string | undefined;
+  let errorStatus: number;
+  let errorStatusText: string;
 
   // TODO DRY
   let requestHeaders: {} = {
@@ -39,14 +41,14 @@ function retrieveIssues(request: IIssuesRequest, requestETag?: string): Promise<
       if (response.status === 200) {
         eTag = response.headers.get("etag") || "";
         link = response.headers.get("link") || undefined;
-
-        return response.json();
       } else if (response.status === 304) {
         // TODO But it is not an error
         throw new NotModifiedError();
       } else {
-        throw new Error("Network response was not ok");
+        errorStatus = response.status;
+        errorStatusText = response.statusText;
       }
+      return response.json();
     })
     .then((json) => {
       if (isIssueJsonArray(json)) {
@@ -59,6 +61,10 @@ function retrieveIssues(request: IIssuesRequest, requestETag?: string): Promise<
         const lastPageNumber: number = parsedLink && parsedLink.last ?
           parseInt(parsedLink.last.page, 10) : request.pageNumber;
         return { eTag, lastPageNumber, page };
+      } else if (errorStatus && errorStatusText) {
+        throw new Error("Network response was not ok. " +
+          errorStatus + " " + errorStatusText + " " +
+          JSON.stringify(json));
       } else {
         throw new Error("Invalid format");
       }

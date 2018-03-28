@@ -1,5 +1,5 @@
 import IIssuesRequest, { isIssuesRequest } from "./entities/issues/IIssuesRequest";
-import IReposSettings, { isReposSettings } from "./entities/repos/IReposSettings";
+import IReposRequest, { isReposRequest } from "./entities/repos/IReposRequest";
 
 const equalsIssuesRequests = (request1: IIssuesRequest, request2: IIssuesRequest): boolean => {
   if (isIssuesRequest(request1)) {
@@ -13,10 +13,10 @@ const equalsIssuesRequests = (request1: IIssuesRequest, request2: IIssuesRequest
 };
 
 // TODO Rename to request1, request2
-const equalsReposSettings = (cachedSettings: {}, settings: IReposSettings): boolean => {
-  if (isReposSettings(cachedSettings)) {
-    return cachedSettings.login === settings.login &&
-      cachedSettings.perPage === settings.perPage;
+const equalsReposSettings = (cachedSettings: {}, request2: IReposRequest): boolean => {
+  if (isReposRequest(cachedSettings)) {
+    return cachedSettings.login === request2.login &&
+      cachedSettings.perPage === request2.perPage;
   } else {
     return false;
   }

@@ -16,18 +16,14 @@ const defaultState: IIssues = {
 
 export const issues = (state: IIssues = defaultState, action: IAction): IIssues => {
   if (isUpdateIssuesAction(action)) {
-    const { eTag, request, apiStatus } = action;
-    const { lastPageNumber, page } = action.response;
+    const { apiStatus, eTag, request, response } = action;
     const cache: IIssuesCacheEntry[] = [
       ...state.cache.filter((cachedEntry) =>
         !equalsIssuesRequests(cachedEntry.request, request)),
       {
         eTag,
         request,
-        response: {
-          lastPageNumber,
-          page,
-        },
+        response,
       },
     ];
 
@@ -35,7 +31,7 @@ export const issues = (state: IIssues = defaultState, action: IAction): IIssues 
       apiStatus,
       cache,
       request,
-      response: action.response,
+      response,
     };
   } else if (isSetIssuesErrorAction(action)) {
     return {

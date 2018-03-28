@@ -11,18 +11,18 @@ interface IProps {
   issues: IIssues;
   hasNext(): boolean;
   hasPrevious(): boolean;
-  onNext(parameters: IIssuesPageRequestState): void;
-  onPrevious(parameters: IIssuesPageRequestState): void;
-  onSubmit(parameters: IIssuesPageRequestState): void;
+  onNext(parameters: IIssuesRequestState): void;
+  onPrevious(parameters: IIssuesRequestState): void;
+  onSubmit(parameters: IIssuesRequestState): void;
 }
 
-interface IIssuesPageRequestState {
+interface IIssuesRequestState {
   login: string;
   perPage: number;
   repo: string;
 }
 
-export default class IssuesPageRequest extends React.PureComponent<IProps, IIssuesPageRequestState> {
+export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRequestState> {
 
   public constructor(props: Readonly<IProps>) {
     super(props);
@@ -131,4 +131,4 @@ export default class IssuesPageRequest extends React.PureComponent<IProps, IIssu
 
 }
 
-export { IIssuesPageRequestState };
+export { IIssuesRequestState };

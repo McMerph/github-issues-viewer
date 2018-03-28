@@ -1,4 +1,3 @@
-import * as parse from "parse-link-header";
 import { Dispatch } from "redux";
 import ActionType from "./actions/ActionType";
 import ISetIssuesErrorAction from "./actions/ISetIssuesErrorAction";
@@ -12,8 +11,8 @@ import ApiState from "./entities/ApiState";
 import IIssuesCacheEntry from "./entities/issues/IIssuesCacheEntry";
 import IIssuesRequest from "./entities/issues/IIssuesRequest";
 import IIssuesResponse from "./entities/issues/IIssuesResponse";
-import ICachedReposPage from "./entities/repos/ICachedReposPage";
-import IReposSettings from "./entities/repos/IReposSettings";
+import IReposCacheEntry from "./entities/repos/IReposCacheEntry";
+import IReposRequest from "./entities/repos/IReposRequest";
 import IStore from "./IStore";
 import { equalsIssuesRequests, equalsReposSettings } from "./utils";
 
@@ -31,39 +30,29 @@ const actionCreator = {
     };
   },
   retrieveRepos: (login: string) => {
-    let page: number = 1;
+    let pageNumber: number = 1;
     return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
       const retrieveNextPage = (): void => {
-        page++;
+        pageNumber++;
         retrievePage();
       };
       const retrievePage = (): void => {
-        const settings: IReposSettings = {
-          login,
-          pageNumber: page,
-          perPage: 10,
-        };
-        const cachedPage: ICachedReposPage | undefined = getState().repos.cache
-          .find((pageInJsonFormat) =>
-            equalsReposSettings(JSON.parse(pageInJsonFormat.settings), settings));
-        let requestETag: string | undefined;
-        if (cachedPage) {
-          requestETag = cachedPage.eTag;
-        }
+        // TODO Set per_page to 100 after tests
+        const request: IReposRequest = { login, pageNumber, perPage: 10 };
+        const cacheEntry: IReposCacheEntry | undefined = getState().repos.cache
+          .find((entry) => equalsReposSettings(entry.request, request));
+        const requestETag: string | undefined = cacheEntry && cacheEntry.eTag;
 
-        retrieveRepos(settings, requestETag)
-          .then((reposResponse) => {
-            const { page: reposPage, eTag } = reposResponse;
-            const reposResponseSettings: IReposSettings = { ...reposResponse.settings };
+        retrieveRepos(request, requestETag)
+          .then((response) => {
+            const { page, eTag } = response;
             const setReposAction: ISetReposAction = {
-              eTag,
-              page: reposPage,
-              settings: reposResponseSettings,
+              eTag, response: page, request,
               type: ActionType.SetRepos,
             };
             dispatch(setReposAction);
 
-            if (reposResponse.link && !!parse(reposResponse.link).next) {
+            if (response.hasNext) {
               retrieveNextPage();
             }
           })
@@ -82,7 +71,8 @@ const actionCreator = {
       const handleSuccessResponse = (response: IIssuesResponse, eTag: string): void => {
         const updateIssuesAction: IUpdateIssuesAction = {
           apiStatus: { state: ApiState.Success },
-          eTag, request, response, type: ActionType.UpdateIssues,
+          eTag, request, response,
+          type: ActionType.UpdateIssues,
         };
         dispatch(updateIssuesAction);
       };
@@ -92,8 +82,8 @@ const actionCreator = {
       const requestETag: string | undefined = cacheEntry && cacheEntry.eTag;
 
       retrieveIssues(request, requestETag)
-        .then((issuesResponse) => {
-          const { lastPageNumber, page, eTag } = issuesResponse;
+        .then((response) => {
+          const { lastPageNumber, page, eTag } = response;
           handleSuccessResponse({ lastPageNumber, page }, eTag);
         })
         .catch((error) => {

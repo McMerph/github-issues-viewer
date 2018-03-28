@@ -8,6 +8,7 @@ const Error = styled.div`
   text-align: center;
   color: ${COLORS.COLOR1};
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
+  word-wrap: break-word;
 `;
 
 const Img = styled.img`

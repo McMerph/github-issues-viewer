@@ -13,7 +13,7 @@ interface IProps {
   page: IIssue[] | undefined;
 }
 
-const IssuesPageResponse: React.SFC<IProps> = (props) => {
+const IssuesResponse: React.SFC<IProps> = (props) => {
   const { issues, page } = props;
 
   if (issues.apiStatus.state === ApiState.Loading) {
@@ -37,4 +37,4 @@ const IssuesPageResponse: React.SFC<IProps> = (props) => {
   }
 };
 
-export default IssuesPageResponse;
+export default IssuesResponse;

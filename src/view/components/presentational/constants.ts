@@ -13,5 +13,5 @@ const FONTS_STACK = Object.freeze({
 });
 
 // TODO Add dictionary
-
+// TODO Add setings e.g. per_page for repos
 export { COLORS, FONTS_STACK };

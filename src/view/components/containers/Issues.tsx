@@ -3,9 +3,9 @@ import ApiState from "../../../model/entities/ApiState";
 import IIssue from "../../../model/entities/issues/IIssue";
 import IIssues from "../../../model/entities/issues/IIssues";
 import IIssuesRequest from "../../../model/entities/issues/IIssuesRequest";
-import { IIssuesPageRequestState } from "../presentational/issues-page-request";
-import IssuesPageRequest from "../presentational/issues-page-request/index";
-import IssuesPageResponse from "../presentational/issues-page-response/index";
+import { IIssuesRequestState } from "../presentational/issues-request";
+import IssuesRequest from "../presentational/issues-request/index";
+import IssuesResponse from "../presentational/issues-response/index";
 
 interface IProps {
   issues: IIssues;
@@ -30,7 +30,7 @@ export default class Issues extends React.PureComponent<IProps, {}> {
 
     return (
       <React.Fragment>
-        <IssuesPageRequest
+        <IssuesRequest
           displayedLogin={issues.request && issues.request.login}
           displayedRepo={issues.request && issues.request.repo}
           issues={issues}
@@ -40,7 +40,7 @@ export default class Issues extends React.PureComponent<IProps, {}> {
           onPrevious={this.onPrevious}
           onSubmit={this.onSubmit}
         />
-        <IssuesPageResponse
+        <IssuesResponse
           page={page}
           issues={issues}
         />
@@ -67,7 +67,7 @@ export default class Issues extends React.PureComponent<IProps, {}> {
     }
   }
 
-  private onSubmit(parameters: IIssuesPageRequestState): void {
+  private onSubmit(parameters: IIssuesRequestState): void {
     if (this.props.issues.apiStatus.state !== ApiState.Loading &&
       parameters.login.length > 0 &&
       parameters.repo.length > 0) {
@@ -75,19 +75,19 @@ export default class Issues extends React.PureComponent<IProps, {}> {
     }
   }
 
-  private onPrevious(parameters: IIssuesPageRequestState): void {
+  private onPrevious(parameters: IIssuesRequestState): void {
     if (this.props.issues.request && this.hasPrevious()) {
       this.retrieve(parameters, this.props.issues.request.pageNumber - 1);
     }
   }
 
-  private onNext(parameters: IIssuesPageRequestState): void {
+  private onNext(parameters: IIssuesRequestState): void {
     if (this.props.issues.request && this.hasNext()) {
       this.retrieve(parameters, this.props.issues.request.pageNumber + 1);
     }
   }
 
-  private retrieve(parameters: IIssuesPageRequestState, pageNumber: number): void {
+  private retrieve(parameters: IIssuesRequestState, pageNumber: number): void {
     this.props.onRetrieveIssues({
       login: parameters.login,
       pageNumber,

@@ -15,5 +15,6 @@ export function isIssuesCacheEntry(object: {}): object is IIssuesCacheEntry {
     isIssuesRequest(cast.request) &&
     typeof cast.response.lastPageNumber === "number" &&
     cast.response &&
-    Array.isArray(cast.response.page) && cast.response.page.every((issue) => isIssue(issue));
+    Array.isArray(cast.response.page) &&
+    cast.response.page.every((issue) => isIssue(issue));
 }

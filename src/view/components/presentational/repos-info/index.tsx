@@ -23,7 +23,7 @@ export default class ReposInfo extends React.PureComponent<IProps, IState> {
 
   public render(): React.ReactNode {
     const { repos } = this.props;
-    const reposNames: string[] = repos.repos.map((repo) => repo.name);
+    const reposNames: string[] = repos.list.map((repo) => repo.name);
 
     return (
       <React.Fragment>

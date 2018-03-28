@@ -1,14 +1,9 @@
+import * as parse from "parse-link-header";
 import IRepo from "../entities/repos/IRepo";
-import IReposSettings from "../entities/repos/IReposSettings";
+import IReposRequest from "../entities/repos/IReposRequest";
+import IRetrieveReposResponse from "./IRetrieveReposResponse";
 import NotModifiedError from "./NotModifiedError";
 import URIS from "./uris";
-
-interface IRetrieveReposResponse {
-  settings: IReposSettings;
-  page: IRepo[];
-  link?: any;
-  eTag: string;
-}
 
 interface IRepoJson {
   name: string;
@@ -16,18 +11,16 @@ interface IRepoJson {
 }
 
 function isReposArrayJson(repos: any): repos is IRepoJson[] {
-  return Array.isArray(repos) && repos.every((repo) => isRepoJson(repo));
+  return Array.isArray(repos) &&
+    repos.every((repo) =>
+      typeof repo.name === "string" &&
+      typeof repo.open_issues_count === "number");
 }
 
-function isRepoJson(repo: any): repo is IRepoJson {
-  return typeof repo.name === "string" &&
-    typeof repo.open_issues_count === "number";
-}
-
-function retrieveRepos(parameters: IReposSettings, requestETag?: string): Promise<IRetrieveReposResponse> {
+function retrieveRepos(parameters: IReposRequest, requestETag?: string): Promise<IRetrieveReposResponse> {
   const { login, pageNumber, perPage } = parameters;
   let eTag: string;
-  let link: string | undefined;
+  let hasNext: boolean;
 
   let requestHeaders: {} = {
     Accept: "application/vnd.github.v3+json",
@@ -42,7 +35,8 @@ function retrieveRepos(parameters: IReposSettings, requestETag?: string): Promis
     .then((response) => {
       if (response.ok) {
         eTag = response.headers.get("etag") || "";
-        link = response.headers.get("link") || undefined;
+        const link = response.headers.get("link");
+        hasNext = (link && !!parse(link).next) || false;
 
         return response.json();
       } else if (response.status === 304) {
@@ -57,8 +51,7 @@ function retrieveRepos(parameters: IReposSettings, requestETag?: string): Promis
           issues: repo.open_issues_count,
           name: repo.name,
         }));
-        const settings: IReposSettings = { login, perPage, pageNumber };
-        return { eTag, link, page, settings };
+        return { eTag, hasNext, page };
       } else {
         throw new Error("Invalid format");
       }
@@ -66,4 +59,3 @@ function retrieveRepos(parameters: IReposSettings, requestETag?: string): Promis
 }
 
 export default retrieveRepos;
-export { IRetrieveReposResponse };
