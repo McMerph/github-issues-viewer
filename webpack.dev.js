@@ -6,6 +6,7 @@ module.exports = merge(common, {
   devtool: 'inline-source-map',
   devServer: {
     host: '0.0.0.0',
+    historyApiFallback: true,
     disableHostCheck: true,
     hot: true,
     useLocalIp: true
