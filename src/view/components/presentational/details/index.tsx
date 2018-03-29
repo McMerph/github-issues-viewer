@@ -19,7 +19,7 @@ const Details: React.SFC<IProps> = (props: IProps) => {
 
   if (props.issues.request && issue) {
     const { login, repo } = props.issues.request;
-    const { title, creationDate } = issue;
+    const { title, creationDate, url } = issue;
     const { profile, login: userLogin, avatar } = issue.user;
 
     return (
@@ -35,8 +35,9 @@ const Details: React.SFC<IProps> = (props: IProps) => {
         <h3>Issue creation date</h3>
         <p>{new Date(creationDate).toLocaleString("ru")}</p>
 
-        <h3>Issue author</h3>
+        <a href={url}>Link</a>
 
+        <h3>Issue author</h3>
         <ProfileWrapper>
           <a href={profile}>{userLogin}</a>
         </ProfileWrapper>
