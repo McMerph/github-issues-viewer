@@ -116,7 +116,7 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
             type="submit"
             disabled={issues.apiStatus.state === ApiState.Loading}
           >
-            Retrieve
+            retrieve / update
           </RetrieveButton>
         </Fieldset>
         {displayedLogin && displayedRepo && <Title>{displayedLogin} / {displayedRepo}</Title>}

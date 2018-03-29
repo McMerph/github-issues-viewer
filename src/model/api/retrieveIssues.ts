@@ -1,9 +1,10 @@
 import * as parse from "parse-link-header";
 import IIssue from "../entities/issues/IIssue";
 import IIssuesRequest from "../entities/issues/IIssuesRequest";
+import IResponseParameters from "./IResponseParameters";
 import IRetrieveIssuesResponse from "./IRetrieveIssuesResponse";
-import NotModifiedError from "./NotModifiedError";
 import URIS from "./uris";
+import { getError, getQueryParams, getRequestInit, handleResponse } from "./utils";
 
 interface IIssueJson {
   created_at: string;
@@ -34,33 +35,14 @@ function isIssueJsonArray(issues: any): issues is IIssueJson[] {
 
 function retrieveIssues(request: IIssuesRequest, requestETag?: string): Promise<IRetrieveIssuesResponse> {
   const { login, repo, pageNumber, perPage } = request;
-  let eTag: string;
-  let link: string | undefined;
-  let errorStatus: number;
-  let errorStatusText: string;
+  let responseParameters: IResponseParameters = {};
 
-  // TODO DRY
-  let requestHeaders: {} = {
-    Accept: "application/vnd.github.v3+json",
-  };
-  if (requestETag) {
-    requestHeaders = { ...requestHeaders, "If-None-Match": requestETag };
-  }
-  return fetch(`${URIS.ROOT}/${URIS.REPOS}/${login}/${repo}/${URIS.ISSUES}?page=${pageNumber}&per_page=${perPage}`, {
-    headers: requestHeaders,
-    method: "get",
-  })
+  return fetch(
+    `${URIS.ROOT}/${URIS.REPOS}/${login}/${repo}/${URIS.ISSUES}${getQueryParams(pageNumber, perPage)}`,
+    getRequestInit(requestETag),
+  )
     .then((response) => {
-      if (response.status === 200) {
-        eTag = response.headers.get("etag") || "";
-        link = response.headers.get("link") || undefined;
-      } else if (response.status === 304) {
-        // TODO But it is not an error
-        throw new NotModifiedError();
-      } else {
-        errorStatus = response.status;
-        errorStatusText = response.statusText;
-      }
+      responseParameters = handleResponse(response);
       return response.json();
     })
     .then((json) => {
@@ -76,16 +58,13 @@ function retrieveIssues(request: IIssuesRequest, requestETag?: string): Promise<
             profile: issue.user.html_url,
           },
         }));
+        const { eTag, link } = responseParameters;
         const parsedLink = link && parse(link);
         const lastPageNumber: number = parsedLink && parsedLink.last ?
           parseInt(parsedLink.last.page, 10) : request.pageNumber;
-        return { eTag, lastPageNumber, page };
-      } else if (errorStatus && errorStatusText) {
-        throw new Error("Network response was not ok. " +
-          errorStatus + " " + errorStatusText + " " +
-          JSON.stringify(json));
+        return { eTag: eTag || "", lastPageNumber, page };
       } else {
-        throw new Error("Invalid format");
+        throw getError(json, responseParameters);
       }
     });
 }

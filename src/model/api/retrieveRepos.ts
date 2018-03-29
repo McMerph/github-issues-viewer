@@ -1,9 +1,10 @@
 import * as parse from "parse-link-header";
 import IRepo from "../entities/repos/IRepo";
 import IReposRequest from "../entities/repos/IReposRequest";
+import IResponseParameters from "./IResponseParameters";
 import IRetrieveReposResponse from "./IRetrieveReposResponse";
-import NotModifiedError from "./NotModifiedError";
 import URIS from "./uris";
+import { getError, getQueryParams, getRequestInit, handleResponse } from "./utils";
 
 interface IRepoJson {
   name: string;
@@ -17,33 +18,17 @@ function isReposArrayJson(repos: any): repos is IRepoJson[] {
       typeof repo.open_issues_count === "number");
 }
 
-function retrieveRepos(parameters: IReposRequest, requestETag?: string): Promise<IRetrieveReposResponse> {
-  const { login, pageNumber, perPage } = parameters;
-  let eTag: string;
-  let hasNext: boolean;
+function retrieveRepos(request: IReposRequest, requestETag?: string): Promise<IRetrieveReposResponse> {
+  const { login, pageNumber, perPage } = request;
+  let responseParameters: IResponseParameters = {};
 
-  let requestHeaders: {} = {
-    Accept: "application/vnd.github.v3+json",
-  };
-  if (requestETag) {
-    requestHeaders = { ...requestHeaders, "If-None-Match": requestETag };
-  }
-  return fetch(`${URIS.ROOT}/${URIS.USERS}/${login}/${URIS.REPOS}?page=${pageNumber}&per_page=${perPage}`, {
-    headers: requestHeaders,
-    method: "get",
-  })
+  return fetch(
+    `${URIS.ROOT}/${URIS.USERS}/${login}/${URIS.REPOS}${getQueryParams(pageNumber, perPage)}`,
+    getRequestInit(requestETag),
+  )
     .then((response) => {
-      if (response.ok) {
-        eTag = response.headers.get("etag") || "";
-        const link = response.headers.get("link");
-        hasNext = (link && !!parse(link).next) || false;
-
-        return response.json();
-      } else if (response.status === 304) {
-        throw new NotModifiedError();
-      } else {
-        throw new Error("Network response was not ok");
-      }
+      responseParameters = handleResponse(response);
+      return response.json();
     })
     .then((json) => {
       if (isReposArrayJson(json)) {
@@ -51,9 +36,11 @@ function retrieveRepos(parameters: IReposRequest, requestETag?: string): Promise
           issues: repo.open_issues_count,
           name: repo.name,
         }));
-        return { eTag, hasNext, page };
+        const { eTag, link } = responseParameters;
+        const hasNext: boolean = (link && !!parse(link).next) || false;
+        return { eTag: eTag || "", hasNext, page };
       } else {
-        throw new Error("Invalid format");
+        throw getError(json, responseParameters);
       }
     });
 }

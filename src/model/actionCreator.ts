@@ -2,7 +2,7 @@ import { Dispatch } from "redux";
 import ActionType from "./actions/ActionType";
 import IUpdateIssuesAction from "./actions/IUpdateIssuesAction";
 import IUpdateReposAction from "./actions/IUpdateReposAction";
-import NotModifiedError from "./api/NotModifiedError";
+import NotModified from "./api/NotModified";
 import retrieveIssues from "./api/retrieveIssues";
 import retrieveRepos from "./api/retrieveRepos";
 import equalsIssuesRequests from "./entities/issues/equalsIssuesRequests";
@@ -24,6 +24,37 @@ const handleErrorResponse = (dispatch: Dispatch<IStore>, error: Error, type: Act
 };
 
 const actionCreator = {
+  retrieveIssues: (request: IIssuesRequest) => {
+    return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
+      dispatch({ type: ActionType.SetIssuesLoading });
+
+      const cacheEntry: IIssuesCacheEntry | undefined = getState().issues.cache
+        .find((entry) => equalsIssuesRequests(entry.request, request));
+      const requestETag: string | undefined = cacheEntry && cacheEntry.eTag;
+
+      const handleSuccessResponse = (response: IIssuesResponse, eTag: string): void => {
+        const updateIssuesAction: IUpdateIssuesAction = {
+          eTag, request, response,
+          type: ActionType.UpdateIssues,
+        };
+        dispatch(updateIssuesAction);
+      };
+
+      retrieveIssues(request, requestETag)
+        .then((apiResponse) => {
+          const { lastPageNumber, page, eTag } = apiResponse;
+          handleSuccessResponse({ lastPageNumber, page }, eTag);
+        })
+        .catch((error) => {
+          if (error instanceof NotModified && cacheEntry && requestETag) {
+            const { lastPageNumber, page } = cacheEntry.response;
+            handleSuccessResponse({ lastPageNumber, page }, requestETag);
+          } else {
+            handleErrorResponse(dispatch, error, ActionType.SetIssuesError);
+          }
+        });
+    };
+  },
   retrieveRepos: (login: string) => {
     let pageNumber: number = 1;
     return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
@@ -49,7 +80,7 @@ const actionCreator = {
           .then((apiResponse) =>
             handleSuccessResponse(apiResponse.eTag, apiResponse.hasNext, apiResponse.page))
           .catch((error) => {
-            if (error instanceof NotModifiedError && cacheEntry && requestETag) {
+            if (error instanceof NotModified && cacheEntry && requestETag) {
               handleSuccessResponse(requestETag, cacheEntry.hasNext, cacheEntry.response);
             } else {
               handleErrorResponse(dispatch, error, ActionType.SetReposError);
@@ -58,37 +89,6 @@ const actionCreator = {
       };
       dispatch({ type: ActionType.SetReposLoading });
       retrievePage();
-    };
-  },
-  retrieveIssues: (request: IIssuesRequest) => {
-    return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
-      dispatch({ type: ActionType.SetIssuesLoading });
-
-      const cacheEntry: IIssuesCacheEntry | undefined = getState().issues.cache
-        .find((entry) => equalsIssuesRequests(entry.request, request));
-      const requestETag: string | undefined = cacheEntry && cacheEntry.eTag;
-
-      const handleSuccessResponse = (response: IIssuesResponse, eTag: string): void => {
-        const updateIssuesAction: IUpdateIssuesAction = {
-          eTag, request, response,
-          type: ActionType.UpdateIssues,
-        };
-        dispatch(updateIssuesAction);
-      };
-
-      retrieveIssues(request, requestETag)
-        .then((apiResponse) => {
-          const { lastPageNumber, page, eTag } = apiResponse;
-          handleSuccessResponse({ lastPageNumber, page }, eTag);
-        })
-        .catch((error) => {
-          if (error instanceof NotModifiedError && cacheEntry && requestETag) {
-            const { lastPageNumber, page } = cacheEntry.response;
-            handleSuccessResponse({ lastPageNumber, page }, requestETag);
-          } else {
-            handleErrorResponse(dispatch, error, ActionType.SetIssuesError);
-          }
-        });
     };
   },
 };
