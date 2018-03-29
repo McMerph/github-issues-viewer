@@ -46,9 +46,9 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
     super(props);
     this.state = {
       // TODO Make "" after finish
-      login: "reactjs",
+      login: (props.issues.request && props.issues.request.login) || "reactjs",
       perPage: 100,
-      repo: "",
+      repo: (props.issues.request && props.issues.request.repo) || "",
     };
     this.onChangeLogin = this.onChangeLogin.bind(this);
     this.onChangeRepo = this.onChangeRepo.bind(this);
@@ -161,7 +161,7 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
 
   private onBlur(): void {
     const sameLogin: boolean = this.props.repos.login === this.state.login;
-    if (!sameLogin && this.props.repos.apiStatus.state !== ApiState.Loading) {
+    if (!sameLogin && this.props.repos.apiStatus.state !== ApiState.Loading && this.state.login) {
       this.props.onRetrieveRepos(this.state.login);
     }
   }
@@ -201,7 +201,9 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
 
   private onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    this.props.onSubmit(this.state);
+    if (this.state.login && this.state.repo) {
+      this.props.onSubmit(this.state);
+    }
   }
 
 }

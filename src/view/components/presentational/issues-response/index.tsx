@@ -2,11 +2,10 @@ import * as React from "react";
 import ApiState from "../../../../model/entities/ApiState";
 import IIssue from "../../../../model/entities/issues/IIssue";
 import IIssues from "../../../../model/entities/issues/IIssues";
+import Error from "../error";
 import Issue from "../issue";
 import Spinner from "../spinner";
-import { Error, Img, Ul } from "./styled";
-
-const warning = require("../../../resources/icons/warning.svg");
+import { Ul } from "./styled";
 
 interface IProps {
   issues: IIssues;
@@ -19,13 +18,7 @@ const IssuesResponse: React.SFC<IProps> = (props) => {
   if (issues.apiStatus.state === ApiState.Loading) {
     return <Spinner/>;
   } else if (issues.apiStatus.state === ApiState.Error) {
-    return (
-      // TODO Change to figure tag?
-      <Error>
-        <Img src={warning} alt="Ошибка"/>
-        {issues.apiStatus.error}
-      </Error>
-    );
+    return <Error message={issues.apiStatus.error || ""}/>;
   } else if (page && page.length > 0) {
     return (
       <Ul>

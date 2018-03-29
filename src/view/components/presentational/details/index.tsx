@@ -2,7 +2,7 @@ import * as React from "react";
 import { Redirect, RouteComponentProps } from "react-router";
 import IIssue from "../../../../model/entities/issues/IIssue";
 import IIssues from "../../../../model/entities/issues/IIssues";
-import { Img, ProfileWrapper, Wrapper } from "./styled";
+import { H1, Img, ProfileWrapper, Wrapper } from "./styled";
 
 interface IDetailsMatchParams {
   id: string;
@@ -24,7 +24,7 @@ const Details: React.SFC<IProps> = (props: IProps) => {
 
     return (
       <Wrapper>
-        <h1>{login}/{repo}</h1>
+        <H1>{login} / {repo}</H1>
 
         <h3>Issue number</h3>
         <p>{issueNumber}</p>
