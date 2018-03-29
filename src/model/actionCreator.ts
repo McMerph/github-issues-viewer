@@ -14,6 +14,7 @@ import IRepo from "./entities/repos/IRepo";
 import IReposCacheEntry from "./entities/repos/IReposCacheEntry";
 import IReposRequest from "./entities/repos/IReposRequest";
 import IStore from "./IStore";
+import SETTINGS from "./settings";
 
 const handleErrorResponse = (dispatch: Dispatch<IStore>, error: Error, type: ActionType): void => {
   dispatch({ error: error.message, type });
@@ -56,8 +57,7 @@ const actionCreator = {
     let pageNumber: number = 1;
     return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
       const retrievePage = (): void => {
-        // TODO Set per_page to 100 after tests in constants
-        const request: IReposRequest = { login, pageNumber, perPage: 20 };
+        const request: IReposRequest = { login, pageNumber, perPage: SETTINGS.REPOS_PER_PAGE };
         const cacheEntry: IReposCacheEntry | undefined = getState().repos.cache
           .find((entry) => equalsReposRequests(entry.request, request));
         const requestETag: string | undefined = cacheEntry && cacheEntry.eTag;
