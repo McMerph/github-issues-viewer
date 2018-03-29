@@ -40,6 +40,8 @@ interface IIssuesRequestState {
 
 export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRequestState> {
 
+  private autoCompleteRef: any;
+
   public constructor(props: Readonly<IProps>) {
     super(props);
     this.state = {
@@ -57,6 +59,11 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
     this.onSelect = this.onSelect.bind(this);
     this.onBlur = this.onBlur.bind(this);
     this.sameLoginAndRepo = this.sameLoginAndRepo.bind(this);
+  }
+
+  // https://github.com/reactjs/react-autocomplete/issues/218
+  public componentDidMount(): void {
+    this.autoCompleteRef.refs.input.addEventListener("click", (e: any) => e.stopPropagation());
   }
 
   public render(): React.ReactNode {
@@ -86,6 +93,7 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
           <LabelWithAutoComplete>
             Repo
             <Autocomplete
+              ref={(ref: any) => this.autoCompleteRef = ref}
               items={this.props.repos.list || []}
               shouldItemRender={this.shouldRepoRender}
               getItemValue={this.getRepoName}
