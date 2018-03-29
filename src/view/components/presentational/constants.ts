@@ -1,4 +1,5 @@
 const COLORS = Object.freeze({
+  // TODO Delete unused, insert used
   COLOR1: "rgba(0, 0, 0, 0.87)",
   COLOR2: "rgba(0, 0, 0, 0.54)",
   COLOR3: "#fff",
