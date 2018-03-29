@@ -5,6 +5,8 @@ import ApiState from "../../../../model/entities/ApiState";
 import IIssues from "../../../../model/entities/issues/IIssues";
 import IRepo from "../../../../model/entities/repos/IRepo";
 import IRepos from "../../../../model/entities/repos/IRepos";
+import { DICTIONARY, SETTINGS } from "../constants";
+import Error from "../error";
 import Navigation from "../navigation";
 import {
   Fieldset,
@@ -16,9 +18,8 @@ import {
   MenuItemAppendix,
   RetrieveButton,
   Title,
-  Wrapper
+  Wrapper,
 } from "./styled";
-import Error from "../error";
 
 interface IProps {
   displayedLogin: string | undefined;
@@ -46,9 +47,8 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
   public constructor(props: Readonly<IProps>) {
     super(props);
     this.state = {
-      // TODO Make "" after finish
-      login: (props.issues.request && props.issues.request.login) || "reactjs",
-      perPage: (props.issues.request && props.issues.request.perPage) || 100,
+      login: (props.issues.request && props.issues.request.login) || SETTINGS.DEFAULT_LOGIN,
+      perPage: (props.issues.request && props.issues.request.perPage) || SETTINGS.DEFAULT_PER_PAGE,
       repo: (props.issues.request && props.issues.request.repo) || "",
     };
     this.onChangeLogin = this.onChangeLogin.bind(this);
@@ -71,28 +71,29 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
     const {
       displayedLogin,
       displayedRepo,
-      issues,
       hasNext,
       hasPrevious,
+      issues,
+      repos,
     } = this.props;
     const { login, repo, perPage } = this.state;
 
     return (
       <Wrapper onSubmit={this.onSubmit}>
         <Fieldset>
-          <Legend>Choose repository</Legend>
+          <Legend>{DICTIONARY.CHOOSE_REPOSITORY}</Legend>
           <Label>
-            Login
+            {DICTIONARY.LOGIN}
             <Input
               onBlur={this.updateRepos}
               type="text"
-              placeholder="e.g. reactjs"
+              placeholder={DICTIONARY.LOGIN_PLACEHOLDER}
               value={login}
               onChange={this.onChangeLogin}
             />
           </Label>
           <LabelWithAutoComplete>
-            Repo
+            {DICTIONARY.REPO}
             <Autocomplete
               ref={(ref: any) => this.autoCompleteRef = ref}
               onMenuVisibilityChange={this.updateRepos}
@@ -107,7 +108,7 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
             />
           </LabelWithAutoComplete>
           <Label>
-            Per page
+            {DICTIONARY.PER_PAGE}
             <Input
               type="number"
               value={perPage}
@@ -118,10 +119,10 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
             type="submit"
             disabled={issues.apiStatus.state === ApiState.Loading}
           >
-            retrieve / update
+            {DICTIONARY.RETRIEVE_UPDATE}
           </RetrieveButton>
         </Fieldset>
-        {this.props.repos.apiStatus.error && <Error message={this.props.repos.apiStatus.error}/>}
+        {repos.apiStatus.error && <Error message={repos.apiStatus.error}/>}
         {displayedLogin && displayedRepo && <Title>{displayedLogin} / {displayedRepo}</Title>}
         <Navigation
           issues={issues}

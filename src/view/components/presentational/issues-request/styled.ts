@@ -11,7 +11,7 @@ const Wrapper = styled.form`
     0 1px 10px 0 rgba(0, 0, 0, 0.12);
   padding: 16px;
   margin: 24px auto;
-  background: ${COLORS.COLOR4};
+  background: ${COLORS.COLOR04};
 `;
 
 const Fieldset = styled.fieldset`
@@ -23,11 +23,12 @@ const Fieldset = styled.fieldset`
 const Legend = styled.legend`
   margin: 0 auto;
   font: normal 500 26px/1 ${FONTS_STACK.ROBOTO};
+  text-align: center;
 `;
 
 const Label = styled.label`
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
-  color: ${COLORS.COLOR1};
+  color: ${COLORS.COLOR01};
   display: flex;
   align-items: baseline;
   margin: 16px 0;
@@ -41,7 +42,7 @@ const LabelWithAutoComplete = Label.extend`
 
   & input {
     font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
-    color: ${COLORS.COLOR1};
+    color: ${COLORS.COLOR01};
     padding: 6px 0;
     width: 100%;
     box-sizing: border-box;
@@ -50,7 +51,7 @@ const LabelWithAutoComplete = Label.extend`
 
 const Input = styled.input`
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
-  color: ${COLORS.COLOR1};
+  color: ${COLORS.COLOR01};
   padding: 6px 0;
   margin-left: auto;
   flex: 0 1 70%;
@@ -70,7 +71,7 @@ const Title = styled.div`
 const MenuItem = styled.div`
   padding: 6px 2px;
   display: flex;
-  background-color: ${(props) => props.theme.highlighted ? "#eee" : "transparent"};
+  background-color: ${(props) => props.theme.highlighted ? COLORS.COLOR10 : "transparent"};
 `;
 
 const MenuItemAppendix = styled.div`

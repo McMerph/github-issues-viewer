@@ -10,8 +10,8 @@ const Wrapper = styled.div`
     0 3px 1px -2px rgba(0, 0, 0, 0.12);
   padding: 16px;
   margin: 10px auto;
-  background: ${COLORS.COLOR3};
-  color: ${COLORS.COLOR1};
+  background: ${COLORS.COLOR03};
+  color: ${COLORS.COLOR01};
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
 `;
 

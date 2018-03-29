@@ -1,9 +1,10 @@
 import styled, { keyframes } from "styled-components";
+import { COLORS } from "../constants";
 
 const Wrapper = styled.div`
   width: 40px;
   height: 40px;
-  color: rgb(156, 39, 176);
+  color: ${COLORS.COLOR06};
   margin: 0 auto;
 `;
 

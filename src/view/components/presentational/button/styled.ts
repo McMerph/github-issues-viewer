@@ -3,13 +3,13 @@ import { COLORS, FONTS_STACK } from "../constants";
 
 const Button = styled.button`
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
-  color: ${COLORS.COLOR1};
+  color: ${COLORS.COLOR01};
   cursor: pointer;
   border: none;
   outline: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   border-radius: 2px;
-  background-color: #e0e0e0;
+  background-color: ${COLORS.COLOR07};
   box-shadow:
     0 1px 5px 0 rgba(0, 0, 0, 0.2),
     0 2px 2px 0 rgba(0, 0, 0, 0.14),
@@ -30,16 +30,16 @@ const Button = styled.button`
   }
 
   &:disabled {
-    color: ${COLORS.COLOR7};
+    color: ${COLORS.COLOR05};
     cursor: not-allowed;
   }
 
   &:hover:enabled {
-    background-color: #d5d5d5;
+    background-color: ${COLORS.COLOR08};
   }
 
   &:active:enabled {
-    background-color: #9e9e9e;
+    background-color: ${COLORS.COLOR09};
   }
 `;
 

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import IIssue from "../../../../model/entities/issues/IIssue";
+import { DICTIONARY } from "../constants";
 import { DateTime, Header, Title, Wrapper } from "./styled";
 
 interface IProps {
@@ -22,7 +23,7 @@ const Issue: React.SFC<IProps> = (props) => {
       </Header>
       <Title>{title}</Title>
 
-      <Link to={link}>Просмотр</Link>
+      <Link to={link}>{DICTIONARY.VIEW}</Link>
     </Wrapper>
   );
 };

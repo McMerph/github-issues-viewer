@@ -10,14 +10,14 @@ const Wrapper = styled.li`
     0 3px 1px -2px rgba(0, 0, 0, 0.12);
   padding: 16px;
   margin: 10px auto;
-  background: ${COLORS.COLOR3};
+  background: ${COLORS.COLOR03};
   list-style: none;
 `;
 
 const Header = styled.div`
   display: flex;
   font: normal 400 14px/1 ${FONTS_STACK.ROBOTO};
-  color: ${COLORS.COLOR2};
+  color: ${COLORS.COLOR02};
 `;
 
 const DateTime = styled.div`
@@ -25,7 +25,7 @@ const DateTime = styled.div`
 `;
 
 const Title = styled.div`
-  color: ${COLORS.COLOR1};
+  color: ${COLORS.COLOR01};
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
   margin: 14px 0;
 `;

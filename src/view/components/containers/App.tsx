@@ -12,7 +12,6 @@ export interface IStateFromProps {
   repos: IRepos;
 }
 
-// TODO DRY It is part of action creator interface
 export interface IDispatchFromProps {
   actions: {
     onRetrieveIssues(request: IIssuesRequest): void;
@@ -21,6 +20,9 @@ export interface IDispatchFromProps {
 }
 
 const App: React.SFC<IStateFromProps & IDispatchFromProps> = (props) => {
+  const { issues, repos } = props;
+  const { onRetrieveIssues, onRetrieveRepos } = props.actions;
+
   return (
     <Router>
       <React.Fragment>
@@ -29,10 +31,10 @@ const App: React.SFC<IStateFromProps & IDispatchFromProps> = (props) => {
           path="/"
           render={() => (
             <Issues
-              issues={props.issues}
-              repos={props.repos}
-              onRetrieveIssues={props.actions.onRetrieveIssues}
-              onRetrieveRepos={props.actions.onRetrieveRepos}
+              issues={issues}
+              repos={repos}
+              onRetrieveIssues={onRetrieveIssues}
+              onRetrieveRepos={onRetrieveRepos}
             />
           )}
         />
@@ -42,7 +44,7 @@ const App: React.SFC<IStateFromProps & IDispatchFromProps> = (props) => {
           render={(routerProps: RouteComponentProps<IDetailsMatchParams>) => (
             <Details
               {...routerProps}
-              issues={props.issues}
+              issues={issues}
             />
           )}
         />

@@ -2,6 +2,7 @@ import * as React from "react";
 import ApiState from "../../../../model/entities/ApiState";
 import IIssues from "../../../../model/entities/issues/IIssues";
 import { BackButton, Info, NextButton, Wrapper } from "./styled";
+import { DICTIONARY } from "../constants";
 
 interface IProps {
   issues: IIssues;
@@ -29,15 +30,15 @@ const Navigation: React.SFC<IProps> = (props) => {
           disabled={!hasPrevious || loading}
           onClick={onPrevious}
         >
-          ← Назад
+          ← {DICTIONARY.BACK}
         </BackButton>
-        {pageNumber && lastPage && <Info>{pageNumber} из {lastPage}</Info>}
+        {pageNumber && lastPage && <Info>{pageNumber} {DICTIONARY.OF} {lastPage}</Info>}
         <NextButton
           type="button"
           disabled={!hasNext || loading}
           onClick={onNext}
         >
-          Далее →
+          {DICTIONARY.NEXT} →
         </NextButton>
       </Wrapper>
     );

@@ -6,7 +6,7 @@ const Wrapper = styled.div`
   ${cardCss};
   margin: 14px auto;
   text-align: center;
-  color: ${COLORS.COLOR1};
+  color: ${COLORS.COLOR01};
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
   word-wrap: break-word;
 `;

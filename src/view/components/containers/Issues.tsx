@@ -15,7 +15,6 @@ interface IProps {
   onRetrieveRepos(login: string): void;
 }
 
-// TODO Make React.SFC?
 export default class Issues extends React.PureComponent<IProps, {}> {
 
   public constructor(props: Readonly<IProps>) {
