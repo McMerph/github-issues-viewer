@@ -1,5 +1,6 @@
 import { injectGlobal } from "styled-components";
 
+// tslint:disable:no-var-requires
 const RobotoLightLatinWoff2 = require("./resources/fonts/RobotoLightLatin.woff2");
 const RobotoLightLatinWoff = require("./resources/fonts/RobotoLightLatin.woff");
 
@@ -17,6 +18,7 @@ const RobotoMediumLatinWoff = require("./resources/fonts/RobotoMediumLatin.woff"
 
 const RobotoMediumCyrillicWoff2 = require("./resources/fonts/RobotoMediumCyrillic.woff2");
 const RobotoMediumCyrillicWoff = require("./resources/fonts/RobotoMediumCyrillic.woff");
+// tslint:enable:no-var-requires
 
 // tslint:disable:max-line-length
 // tslint:disable-next-line:no-unused-expression

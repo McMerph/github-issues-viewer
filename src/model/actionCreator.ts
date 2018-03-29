@@ -18,6 +18,7 @@ import SETTINGS from "./settings";
 
 const handleErrorResponse = (dispatch: Dispatch<IStore>, error: Error, type: ActionType): void => {
   dispatch({ error: error.message, type });
+  // tslint:disable-next-line:no-console
   console.error(error.message);
 };
 

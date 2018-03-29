@@ -1,8 +1,8 @@
 import * as React from "react";
 import ApiState from "../../../../model/entities/ApiState";
 import IIssues from "../../../../model/entities/issues/IIssues";
-import { BackButton, Info, NextButton, Wrapper } from "./styled";
 import { DICTIONARY } from "../constants";
+import { BackButton, Info, NextButton, Wrapper } from "./styled";
 
 interface IProps {
   issues: IIssues;

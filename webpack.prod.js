@@ -11,9 +11,12 @@ module.exports = merge(common, {
       'normalize.css',
       'parse-link-header',
       'react',
+      'react-autocomplete',
       'react-dom',
       'react-redux',
+      'react-router-dom',
       'redux',
+      'redux-thunk',
       'styled-components',
       'whatwg-fetch'
     ]

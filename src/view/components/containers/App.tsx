@@ -29,6 +29,7 @@ const App: React.SFC<IStateFromProps & IDispatchFromProps> = (props) => {
         <Route
           exact={true}
           path="/"
+          // tslint:disable-next-line:jsx-no-multiline-js jsx-no-lambda
           render={() => (
             <Issues
               issues={issues}
@@ -41,6 +42,7 @@ const App: React.SFC<IStateFromProps & IDispatchFromProps> = (props) => {
 
         <Route
           path="/issues/:id"
+          // tslint:disable-next-line:jsx-no-multiline-js jsx-no-lambda
           render={(routerProps: RouteComponentProps<IDetailsMatchParams>) => (
             <Details
               {...routerProps}

@@ -6,6 +6,7 @@ interface IProps {
   message: string;
 }
 
+// tslint:disable-next-line:no-var-requires
 const icon = require("../../../resources/icons/warning.svg");
 
 const Error: React.SFC<IProps> = (props) => (
