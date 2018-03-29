@@ -43,13 +43,14 @@ const handleResponse = (response: Response): IResponseParameters => {
   return { eTag, errorStatus, errorStatusText, link };
 };
 
-const getError = (json: any, responseParameters: IResponseParameters): Error => {
+const getError = (json: any, responseParameters: IResponseParameters, prefix: string): Error => {
   if (responseParameters.errorStatus && responseParameters.errorStatusText) {
-    return new Error("Network response was not ok. " +
-      responseParameters.errorStatus + " " + responseParameters.errorStatusText + " " +
+    return new Error(prefix + " " +
+      responseParameters.errorStatus + " " +
+      responseParameters.errorStatusText + " " +
       JSON.stringify(json));
   } else {
-    return new Error("Invalid format");
+    return new Error("Invalid format of retrieved data");
   }
 };
 

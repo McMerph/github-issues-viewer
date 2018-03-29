@@ -8,7 +8,7 @@ export default interface IIssue {
   user: IIssueUser;
 }
 
-export function isIssue(object: {}): object is IIssue {
+export function isIssue(object: any): object is IIssue {
   const cast: IIssue = object as IIssue;
   return typeof typeof cast.creationDate === "string" &&
     typeof cast.number === "number" &&

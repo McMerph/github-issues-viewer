@@ -39,8 +39,7 @@ const issues = (state: IIssues = defaultState, action: IAction): IIssues => {
       cache: state.cache,
     };
   } else {
-    // TODO WTF? just return state
-    return { ...defaultState, ...state };
+    return state;
   }
 };
 

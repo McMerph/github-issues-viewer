@@ -64,7 +64,7 @@ function retrieveIssues(request: IIssuesRequest, requestETag?: string): Promise<
           parseInt(parsedLink.last.page, 10) : request.pageNumber;
         return { eTag: eTag || "", lastPageNumber, page };
       } else {
-        throw getError(json, responseParameters);
+        throw getError(json, responseParameters, "Error while retrieve issues");
       }
     });
 }

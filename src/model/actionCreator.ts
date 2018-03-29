@@ -16,11 +16,8 @@ import IReposRequest from "./entities/repos/IReposRequest";
 import IStore from "./IStore";
 
 const handleErrorResponse = (dispatch: Dispatch<IStore>, error: Error, type: ActionType): void => {
-  dispatch({
-    error: `There has been a problem with your fetch operation: ${error.message}`,
-    type,
-  });
-  console.error(`There has been a problem with your fetch operation: ${error.message}`);
+  dispatch({ error: error.message, type });
+  console.error(error.message);
 };
 
 const actionCreator = {

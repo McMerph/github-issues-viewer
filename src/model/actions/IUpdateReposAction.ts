@@ -15,6 +15,8 @@ export function isUpdateReposAction(action: IAction): action is IUpdateReposActi
   return cast.type === ActionType.UpdateRepos &&
     typeof cast.eTag === "string" &&
     typeof cast.hasNext === "boolean" &&
+    cast.request &&
     isReposRequest(cast.request) &&
-    (Array.isArray(cast.response) && cast.response.every((repo) => isRepo(repo)));
+    Array.isArray(cast.response) &&
+    cast.response.every((repo) => isRepo(repo));
 }

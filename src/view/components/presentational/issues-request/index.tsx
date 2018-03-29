@@ -18,6 +18,7 @@ import {
   Title,
   Wrapper
 } from "./styled";
+import Error from "../error";
 
 interface IProps {
   displayedLogin: string | undefined;
@@ -47,7 +48,7 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
     this.state = {
       // TODO Make "" after finish
       login: (props.issues.request && props.issues.request.login) || "reactjs",
-      perPage: 100,
+      perPage: (props.issues.request && props.issues.request.perPage) || 100,
       repo: (props.issues.request && props.issues.request.repo) || "",
     };
     this.onChangeLogin = this.onChangeLogin.bind(this);
@@ -57,7 +58,7 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
     this.onPrevious = this.onPrevious.bind(this);
     this.onNext = this.onNext.bind(this);
     this.onSelect = this.onSelect.bind(this);
-    this.onBlur = this.onBlur.bind(this);
+    this.updateRepos = this.updateRepos.bind(this);
     this.sameLoginAndRepo = this.sameLoginAndRepo.bind(this);
   }
 
@@ -83,7 +84,7 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
           <Label>
             Login
             <Input
-              onBlur={this.onBlur}
+              onBlur={this.updateRepos}
               type="text"
               placeholder="e.g. reactjs"
               value={login}
@@ -94,6 +95,7 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
             Repo
             <Autocomplete
               ref={(ref: any) => this.autoCompleteRef = ref}
+              onMenuVisibilityChange={this.updateRepos}
               items={this.props.repos.list || []}
               shouldItemRender={this.shouldRepoRender}
               getItemValue={this.getRepoName}
@@ -119,6 +121,7 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
             retrieve / update
           </RetrieveButton>
         </Fieldset>
+        {this.props.repos.apiStatus.error && <Error message={this.props.repos.apiStatus.error}/>}
         {displayedLogin && displayedRepo && <Title>{displayedLogin} / {displayedRepo}</Title>}
         <Navigation
           issues={issues}
@@ -159,7 +162,7 @@ export default class IssuesRequest extends React.PureComponent<IProps, IIssuesRe
     });
   }
 
-  private onBlur(): void {
+  private updateRepos(): void {
     const sameLogin: boolean = this.props.repos.login === this.state.login;
     if (!sameLogin && this.props.repos.apiStatus.state !== ApiState.Loading && this.state.login) {
       this.props.onRetrieveRepos(this.state.login);

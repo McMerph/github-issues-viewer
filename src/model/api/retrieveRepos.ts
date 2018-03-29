@@ -40,7 +40,7 @@ function retrieveRepos(request: IReposRequest, requestETag?: string): Promise<IR
         const hasNext: boolean = (link && !!parse(link).next) || false;
         return { eTag: eTag || "", hasNext, page };
       } else {
-        throw getError(json, responseParameters);
+        throw getError(json, responseParameters, "Error while retrieve repos");
       }
     });
 }

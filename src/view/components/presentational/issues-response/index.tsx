@@ -17,8 +17,8 @@ const IssuesResponse: React.SFC<IProps> = (props) => {
 
   if (issues.apiStatus.state === ApiState.Loading) {
     return <Spinner/>;
-  } else if (issues.apiStatus.state === ApiState.Error) {
-    return <Error message={issues.apiStatus.error || ""}/>;
+  } else if (issues.apiStatus.error) {
+    return <Error message={issues.apiStatus.error}/>;
   } else if (page && page.length > 0) {
     return (
       <Ul>

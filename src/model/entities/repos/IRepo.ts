@@ -1,10 +1,10 @@
 export default interface IRepo {
-  name: string;
   issues: number;
+  name: string;
 }
 
 export function isRepo(object: any): object is IRepo {
   const cast: IRepo = object as IRepo;
-  return typeof cast.name === "string" &&
-    typeof cast.issues === "number";
+  return typeof cast.issues === "number" &&
+    typeof cast.name === "string";
 }

@@ -45,8 +45,7 @@ const repos = (state: IRepos = defaultState, action: IAction): IRepos => {
       list: [],
     };
   } else {
-    // TODO WTF? just return state
-    return { ...defaultState, ...state };
+    return state;
   }
 };
 
