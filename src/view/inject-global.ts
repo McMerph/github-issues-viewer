@@ -26,7 +26,7 @@ injectGlobal`
   }
 
   body {
-    background-color: #e2e1e0;
+    background-color: #eee;
   }
 
   /* RobotoLightLatin */

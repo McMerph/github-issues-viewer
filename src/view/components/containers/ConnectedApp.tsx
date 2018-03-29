@@ -11,8 +11,6 @@ const mapDispatchToProps: (dispatch: Dispatch<IStore>) => IDispatchFromProps = (
   actions: {
     onRetrieveIssues: (request: IIssuesRequest) =>
       dispatch(actionCreator.retrieveIssues(request)),
-    onRetrieveUser: (login: string) =>
-      dispatch(actionCreator.retrieveUser(login)),
     onRetrieveRepos: (login: string) =>
       dispatch(actionCreator.retrieveRepos(login)),
   },

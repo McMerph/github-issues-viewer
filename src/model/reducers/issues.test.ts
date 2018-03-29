@@ -1,12 +1,12 @@
 import ActionType from "../actions/ActionType";
 import IAction from "../actions/IAction";
+import ISetErrorAction from "../actions/ISetErrorAction";
 import IUpdateIssuesAction from "../actions/IUpdateIssuesAction";
 import ApiState from "../entities/ApiState";
 import IIssue from "../entities/issues/IIssue";
 import IIssues from "../entities/issues/IIssues";
 import IIssuesRequest from "../entities/issues/IIssuesRequest";
-import { issues } from "./issues";
-import ISetErrorAction from "../actions/ISetErrorAction";
+import issues from "./issues";
 
 describe("issues() is a reducer for issues of current repository", () => {
   test("issues() instantiates with correct initial state", () => {

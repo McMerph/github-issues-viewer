@@ -1,6 +1,6 @@
 const STATE_KEY = "state";
 
-const loadState = (): {} | undefined => {
+const loadState = (): any | undefined => {
   try {
     const serializedState: string | null = localStorage.getItem(STATE_KEY);
     if (serializedState === null) {
@@ -13,7 +13,7 @@ const loadState = (): {} | undefined => {
   }
 };
 
-const saveState = (state: {}): void => {
+const saveState = (state: any): void => {
   try {
     const serializedState: string = JSON.stringify(state);
     localStorage.setItem(STATE_KEY, serializedState);

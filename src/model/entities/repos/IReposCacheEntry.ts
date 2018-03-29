@@ -8,7 +8,7 @@ export default interface IReposCacheEntry {
   response: IRepo[];
 }
 
-export function isCachedReposPage(object: any): object is IReposCacheEntry {
+export function isReposCacheEntry(object: any): object is IReposCacheEntry {
   const cast: IReposCacheEntry = object as IReposCacheEntry;
   return typeof cast.eTag === "string" &&
     typeof cast.hasNext === "boolean" &&

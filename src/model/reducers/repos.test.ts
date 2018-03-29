@@ -1,12 +1,12 @@
 import ActionType from "../actions/ActionType";
 import IAction from "../actions/IAction";
+import ISetErrorAction from "../actions/ISetErrorAction";
 import IUpdateReposAction from "../actions/IUpdateReposAction";
 import ApiState from "../entities/ApiState";
 import IRepo from "../entities/repos/IRepo";
 import IRepos from "../entities/repos/IRepos";
 import IReposRequest from "../entities/repos/IReposRequest";
-import { repos } from "./repos";
-import ISetErrorAction from "../actions/ISetErrorAction";
+import repos from "./repos";
 
 describe("repos() is a reducer for repositories of current user", () => {
   test("repos() instantiates with correct initial state", () => {

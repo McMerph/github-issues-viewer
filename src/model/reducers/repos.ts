@@ -12,7 +12,7 @@ const defaultState: IRepos = {
   cache: [],
 };
 
-export const repos = (state: IRepos = defaultState, action: IAction): IRepos => {
+const repos = (state: IRepos = defaultState, action: IAction): IRepos => {
   if (isUpdateReposAction(action)) {
     const { eTag, hasNext, request, response } = action;
     const cache: IReposCacheEntry[] = [
@@ -49,3 +49,6 @@ export const repos = (state: IRepos = defaultState, action: IAction): IRepos => 
     return { ...defaultState, ...state };
   }
 };
+
+export default repos;
+export { defaultState };

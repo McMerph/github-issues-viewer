@@ -12,7 +12,7 @@ const defaultState: IIssues = {
   cache: [],
 };
 
-export const issues = (state: IIssues = defaultState, action: IAction): IIssues => {
+const issues = (state: IIssues = defaultState, action: IAction): IIssues => {
   if (isUpdateIssuesAction(action)) {
     const { eTag, request, response } = action;
     const cache: IIssuesCacheEntry[] = [
@@ -43,3 +43,6 @@ export const issues = (state: IIssues = defaultState, action: IAction): IIssues 
     return { ...defaultState, ...state };
   }
 };
+
+export default issues;
+export { defaultState };

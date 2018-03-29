@@ -5,7 +5,6 @@ import IUpdateReposAction from "./actions/IUpdateReposAction";
 import NotModifiedError from "./api/NotModifiedError";
 import retrieveIssues from "./api/retrieveIssues";
 import retrieveRepos from "./api/retrieveRepos";
-import retrieveUser from "./api/retrieveUser";
 import equalsIssuesRequests from "./entities/issues/equalsIssuesRequests";
 import IIssuesCacheEntry from "./entities/issues/IIssuesCacheEntry";
 import IIssuesRequest from "./entities/issues/IIssuesRequest";
@@ -25,18 +24,6 @@ const handleErrorResponse = (dispatch: Dispatch<IStore>, error: Error, type: Act
 };
 
 const actionCreator = {
-  retrieveUser: (login: string) => {
-    return (dispatch: Dispatch<IStore>) => {
-      retrieveUser(login)
-        .then((user) => {
-          dispatch({ type: ActionType.SetUser, user });
-        })
-        .catch((error) => {
-          // TODO handle error
-          console.error(error);
-        });
-    };
-  },
   retrieveRepos: (login: string) => {
     let pageNumber: number = 1;
     return (dispatch: Dispatch<IStore>, getState: () => IStore) => {
