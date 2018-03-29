@@ -2,7 +2,7 @@ import * as React from "react";
 import { Redirect, RouteComponentProps } from "react-router";
 import IIssue from "../../../../model/entities/issues/IIssue";
 import IIssues from "../../../../model/entities/issues/IIssues";
-import { Wrapper } from "./styled";
+import { Img, ProfileWrapper, Wrapper } from "./styled";
 
 interface IDetailsMatchParams {
   id: string;
@@ -20,14 +20,11 @@ const Details: React.SFC<IProps> = (props: IProps) => {
   if (props.issues.request && issue) {
     const { login, repo } = props.issues.request;
     const { title, creationDate } = issue;
+    const { profile, login: userLogin, avatar } = issue.user;
 
     return (
       <Wrapper>
-        <h3>Login</h3>
-        <p>{login}</p>
-
-        <h3>Repo</h3>
-        <p>{repo}</p>
+        <h1>{login}/{repo}</h1>
 
         <h3>Issue number</h3>
         <p>{issueNumber}</p>
@@ -37,6 +34,13 @@ const Details: React.SFC<IProps> = (props: IProps) => {
 
         <h3>Issue creation date</h3>
         <p>{new Date(creationDate).toLocaleString("ru")}</p>
+
+        <h3>Issue author</h3>
+
+        <ProfileWrapper>
+          <a href={profile}>{userLogin}</a>
+        </ProfileWrapper>
+        <Img src={avatar} alt="User avatar"/>
       </Wrapper>
     );
   } else {

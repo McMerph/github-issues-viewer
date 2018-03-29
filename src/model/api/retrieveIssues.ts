@@ -9,6 +9,13 @@ interface IIssueJson {
   title: string;
   number: number;
   created_at: string;
+  user: IIssueUserJson;
+}
+
+interface IIssueUserJson {
+  login: string;
+  avatar_url: string;
+  html_url: string;
 }
 
 function isIssueJsonArray(issues: any): issues is IIssueJson[] {
@@ -16,7 +23,11 @@ function isIssueJsonArray(issues: any): issues is IIssueJson[] {
     issues.every((issue) =>
       typeof issue.title === "string" &&
       typeof issue.number === "number" &&
-      typeof issue.created_at === "string");
+      typeof issue.created_at === "string" &&
+      issue.user &&
+      typeof issue.user.login === "string" &&
+      typeof issue.user.avatar_url === "string" &&
+      typeof issue.user.html_url === "string");
 }
 
 function retrieveIssues(request: IIssuesRequest, requestETag?: string): Promise<IRetrieveIssuesResponse> {
@@ -56,6 +67,11 @@ function retrieveIssues(request: IIssuesRequest, requestETag?: string): Promise<
           creationDate: issue.created_at,
           number: issue.number,
           title: issue.title,
+          user: {
+            avatar: issue.user.avatar_url,
+            login: issue.user.login,
+            profile: issue.user.html_url,
+          },
         }));
         const parsedLink = link && parse(link);
         const lastPageNumber: number = parsedLink && parsedLink.last ?

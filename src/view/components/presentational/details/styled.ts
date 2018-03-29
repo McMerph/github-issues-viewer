@@ -15,4 +15,12 @@ const Wrapper = styled.div`
   font: normal 500 16px/1 ${FONTS_STACK.ROBOTO};
 `;
 
-export { Wrapper };
+const ProfileWrapper = styled.div`
+  margin: 16px 0;
+`;
+
+const Img = styled.img`
+  width: 100%;
+`;
+
+export { Wrapper, ProfileWrapper, Img };

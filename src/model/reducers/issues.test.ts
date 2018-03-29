@@ -78,6 +78,11 @@ describe("issues() is a reducer for issues of current repository", () => {
         creationDate: new Date("2018-01-23T21:39:10Z").toString(),
         number: 1,
         title: "title1",
+        user: {
+          avatar: "avatarUel",
+          login: "userLogin",
+          profile: "profileUrl",
+        },
       },
     ];
     const lastPageNumber = 3;
